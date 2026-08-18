@@ -136,6 +136,10 @@ a { color: inherit; }
   letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-muted);
 }
 .wrap { max-width: 76rem; margin: 0 auto; padding: 0 1.5rem; }
+/* ⚠️ Anything that is BOTH `.wrap` and a section class must set `padding-block`, never the
+   `padding` shorthand — the shorthand resets the gutter above to 0 and, because the section
+   rules come later, wins. On desktop the rail margin hid it; on a phone the text sat flush
+   against the screen edge. */
 
 /* ── Nav ────────────────────────────────────────────────────────────────── */
 nav {
@@ -149,6 +153,13 @@ nav {
 .brand svg { width: 1.75rem; height: 1.75rem; flex: none; }
 @media (max-width: 26rem) { .brand { font-size: 0.9375rem; } .brand svg { width: 1.5rem; height: 1.5rem; } }
 @media (max-width: 30rem) { .nav-in .btn { padding: 0 0.75rem; font-size: 0.875rem; white-space: nowrap; } }
+.nav-cta .cta-short { display: none; }
+@media (max-width: 24rem) {
+  .nav-cta .cta-long { display: none; }
+  .nav-cta .cta-short { display: inline; }
+}
+/* The wordmark is a link, so give it the same 44px touch height as everything else. */
+.brand { padding-block: 0.625rem; }
 .nav-sp { flex: 1; }
 .nav-links { display: flex; gap: 1.625rem; font-size: 0.875rem; color: var(--ink-muted); }
 .nav-links a { text-decoration: none; }
@@ -177,7 +188,7 @@ main { position: relative; }
 .rail-fill { position: absolute; top: 0; left: 0.5rem; width: 1px; height: calc(var(--progress, 0) * 100%); background: linear-gradient(var(--azure), var(--azure-lift)); }
 @media (max-width: 61rem) { .rail { display: none; } }
 
-.hour { position: relative; padding: 5.5rem 0; }
+.hour { position: relative; padding-block: 5.5rem; }
 .hour + .hour { border-top: 1px solid var(--rule-soft); }
 .hour-body { max-width: var(--measure); }
 @media (min-width: 61rem) { .hour-body, .hour > .shot-hold, .hour > .cards { margin-left: calc(var(--rail) + 1.5rem); } }
@@ -201,7 +212,7 @@ main { position: relative; }
 .rise.d3 { transition-delay: 240ms; } .rise.d4 { transition-delay: 320ms; }
 
 /* ── Hero ───────────────────────────────────────────────────────────────── */
-.hero { padding: 4.5rem 0 1rem; }
+.hero { padding-block: 4.5rem 1rem; }
 .hero .hour-body { max-width: 47rem; }
 .hero-kicker {
   display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 1.75rem;
@@ -216,6 +227,13 @@ main { position: relative; }
 .hero-lede { margin-top: 1.5rem; max-width: 47ch; font-size: 1.1875rem; color: var(--ink-muted); }
 .hero-cta { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 2.25rem; align-items: center; }
 .hero-note { font-size: 0.8125rem; color: var(--ink-faint); }
+/* On a phone two auto-width buttons plus a trailing note wrap into a ragged three-item row.
+   Stack them, full width, with the note on its own line under the pair. */
+@media (max-width: 34rem) {
+  .hero-cta { flex-direction: column; align-items: stretch; gap: 0.625rem; }
+  .hero-cta .btn { width: 100%; justify-content: center; }
+  .hero-note { text-align: center; }
+}
 
 /* ── Screenshot frames ──────────────────────────────────────────────────── */
 .shot-hold { margin-top: 3rem; position: relative; }
@@ -239,16 +257,20 @@ main { position: relative; }
    the image keeps a legible minimum width and scrolls inside its own container — the same
    rule the app itself follows for wide content. The frame bar stays put because the scroller
    wraps only the image. */
-/* The agenda capture carries ~a third of empty grid below the last appointment. On a light
-   ground it blends; on a dark one it reads as a rendering fault. Cropped in CSS so the PNG
-   is never re-encoded and the change stays one line. */
-.shot-scroll.crop-66 img { aspect-ratio: 1500 / 660; object-fit: cover; object-position: top center; }
-.shot-scroll { overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
-.frame-bar .hint { display: none; margin-left: auto; white-space: nowrap; color: var(--azure); font-family: "Geist Mono", monospace; font-size: 0.6875rem; letter-spacing: 0.06em; }
-@media (max-width: 47rem) {
-  .shot-scroll img { min-width: 46rem; }
-  .frame-bar .hint { display: inline; }
+/* Each screenshot is art-directed, not scaled: phones are served a capture taken at phone
+   width, so what a visitor sees is the app's own mobile layout — bottom nav, tables rendered
+   as cards, the odontogram split by arch. Scaling a 1500 px desktop capture into 375 px was
+   unreadable, and making it swipe sideways only moved the problem onto the reader. */
+.shot { display: block; }
+.shot img { width: 100%; height: auto; display: block; }
+
+/* The agenda's DESKTOP capture carries ~a third of empty grid below the last appointment.
+   Scoped to the desktop breakpoint: the phone capture is already tight and must not be cropped. */
+@media (min-width: 47.01rem) {
+  .shot.crop-66 img { aspect-ratio: 1500 / 660; object-fit: cover; object-position: top center; }
 }
+
+.frame img { width: 100%; height: auto; }
 
 /* the hero shot: lands from a slight 3D tilt, then drifts on scroll */
 .hero-shot { perspective: 1600px; margin-top: 3.5rem; }
@@ -376,7 +398,7 @@ main { position: relative; }
 .card.amb .ico { background: var(--amber-wash); color: var(--amber-ink); }
 
 /* ── Coverage grid ("tout est couvert") ─────────────────────────────────── */
-.cover { padding: 6rem 0; }
+.cover { padding-block: 6rem; }
 .cover-head { max-width: 44rem; margin-bottom: 3.25rem; }
 .cover-head h2 { font-size: clamp(1.875rem, 4vw, 2.75rem); }
 .cover-head p { margin-top: 1.125rem; color: var(--ink-muted); font-size: 1.0625rem; }
@@ -409,7 +431,7 @@ main { position: relative; }
 .keep .pill { font-family: "Geist Mono", monospace; font-size: 0.625rem; letter-spacing: 0.06em; padding: 0.1875rem 0.5rem; border-radius: 999px; background: color-mix(in oklab, var(--zc) 13%, var(--paper)); color: var(--zc); white-space: nowrap; }
 
 /* ── Close ──────────────────────────────────────────────────────────────── */
-.close { padding: 6.5rem 0 4rem; text-align: center; }
+.close { padding-block: 6.5rem 4rem; text-align: center; }
 .close h2 { font-size: clamp(2rem, 4.6vw, 3.125rem); max-width: 26ch; margin: 0 auto; }
 .close p { margin: 1.25rem auto 0; max-width: 46ch; color: var(--ink-muted); font-size: 1.0625rem; }
 .close .hero-cta { justify-content: center; }
@@ -446,7 +468,7 @@ footer { padding: 2.5rem 0 3.5rem; border-top: 1px solid var(--rule-soft); font-
       <a href="#h18">La caisse</a>
       <a href="#tout">Tout le reste</a>
     </div>
-    <a class="btn btn-primary" href="#fin">Essayer 30 jours</a>
+    <a class="btn btn-primary nav-cta" href="#fin"><span class="cta-long">Essayer 30 jours</span><span class="cta-short">Essai</span></a>
   </div>
 </nav>
 
@@ -468,8 +490,11 @@ footer { padding: 2.5rem 0 3.5rem; border-top: 1px solid var(--rule-soft); font-
 
     <div class="hero-shot">
       <div class="frame">
-        <div class="frame-bar"><span class="dot3"><i></i><i></i><i></i></span><span class="u">Tableau de bord — mardi 18 août</span><span class="hint">glissez →</span></div>
-        <div class="shot-scroll"><img src="img/app-dashboard.png" alt="Le tableau de bord : la journée en ruban, les séances à clôturer, l'activité et l'argent du cabinet." width="1500" height="1000"></div>
+        <div class="frame-bar"><span class="dot3"><i></i><i></i><i></i></span><span class="u">Tableau de bord — mardi 18 août</span></div>
+        <picture class="shot">
+          <source media="(max-width: 47rem)" srcset="img/mobile/m-dashboard.png" width="390" height="844">
+          <img src="img/app-dashboard.png" alt="Le tableau de bord : la journée en ruban, les séances à clôturer, l'activité et l'argent du cabinet." width="1500" height="1000">
+        </picture>
         <div class="call tl" style="left: 30%; top: 70%; transition-delay: 1.45s">Le ruban de la journée : <b>4 RDV, 5 actes, 3 h 20 au fauteuil, fin prévue 15:50</b></div>
         <div class="call bl" style="left: 22%; top: 8%; transition-delay: 1.15s">Une séance passée attend encore une présence, une fiche ou un encaissement — <b>le logiciel le sait tout seul</b></div>
       </div>
@@ -548,8 +573,11 @@ footer { padding: 2.5rem 0 3.5rem; border-top: 1px solid var(--rule-soft); font-
     </div>
     <div class="shot-hold rise d2">
       <div class="frame drift" data-drift="14">
-        <div class="frame-bar"><span class="dot3"><i></i><i></i><i></i></span><span class="u">Rendez-vous — semaine du 17 au 23 août</span><span class="hint">glissez →</span></div>
-        <div class="shot-scroll crop-66"><img src="img/app-agenda.png" alt="L'agenda hebdomadaire du cabinet, chaque acte dans sa couleur, la journée du jour surlignée." width="1500" height="1000"></div>
+        <div class="frame-bar"><span class="dot3"><i></i><i></i><i></i></span><span class="u">Rendez-vous — semaine du 17 au 23 août</span></div>
+        <picture class="shot crop-66">
+          <source media="(max-width: 47rem)" srcset="img/mobile/m-agenda.png" width="390" height="844">
+          <img src="img/app-agenda.png" alt="L'agenda hebdomadaire du cabinet, chaque acte dans sa couleur, la journée du jour surlignée." width="1500" height="1000">
+        </picture>
       </div>
     </div>
     <div class="cards">
@@ -581,8 +609,11 @@ footer { padding: 2.5rem 0 3.5rem; border-top: 1px solid var(--rule-soft); font-
     </div>
     <div class="shot-hold rise d2">
       <div class="frame drift" data-drift="18">
-        <div class="frame-bar"><span class="dot3"><i></i><i></i><i></i></span><span class="u">Karim Hamdi — odontogramme</span><span class="hint">glissez →</span></div>
-        <div class="shot-scroll"><img src="img/crop-odonto.png" alt="L'odontogramme de la fiche patient : chaque dent colorée selon son état, avec la légende carie, obturation, couronne, traitement de canal, extraite, à traiter." width="1181" height="426"></div>
+        <div class="frame-bar"><span class="dot3"><i></i><i></i><i></i></span><span class="u">Karim Hamdi — odontogramme</span></div>
+        <picture class="shot">
+          <source media="(max-width: 47rem)" srcset="img/mobile/m-odonto.png" width="390" height="844">
+          <img src="img/crop-odonto.png" alt="L'odontogramme de la fiche patient : chaque dent colorée selon son état, avec la légende carie, obturation, couronne, traitement de canal, extraite, à traiter." width="1181" height="426">
+        </picture>
         <div class="call tr" style="right: 3%; top: 49%">« Créer un plan depuis l'odontogramme » — <b>le devis se remplit tout seul</b></div>
       </div>
     </div>
@@ -615,8 +646,11 @@ footer { padding: 2.5rem 0 3.5rem; border-top: 1px solid var(--rule-soft); font-
     </div>
     <div class="shot-hold rise d2">
       <div class="frame drift" data-drift="14">
-        <div class="frame-bar"><span class="dot3"><i></i><i></i><i></i></span><span class="u">À clôturer — 7 derniers jours</span><span class="hint">glissez →</span></div>
-        <div class="shot-scroll"><img src="img/app-cloturer.png" alt="La liste « À clôturer » : pour chaque séance passée, les trois étapes Venue, Fiche, Encaissement, et le seul bouton de l'étape suivante." width="1500" height="1000"></div>
+        <div class="frame-bar"><span class="dot3"><i></i><i></i><i></i></span><span class="u">À clôturer — 7 derniers jours</span></div>
+        <picture class="shot">
+          <source media="(max-width: 47rem)" srcset="img/mobile/m-cloturer.png" width="390" height="844">
+          <img src="img/app-cloturer.png" alt="La liste « À clôturer » : pour chaque séance passée, les trois étapes Venue, Fiche, Encaissement, et le seul bouton de l'étape suivante." width="1500" height="1000">
+        </picture>
         <div class="call bl" style="left: 58%; top: 13%">Venue → Fiche → Encaissement : <b>seule l'étape suivante est proposée</b></div>
       </div>
     </div>
@@ -632,8 +666,11 @@ footer { padding: 2.5rem 0 3.5rem; border-top: 1px solid var(--rule-soft); font-
     </div>
     <div class="shot-hold rise d2">
       <div class="frame drift" data-drift="16">
-        <div class="frame-bar"><span class="dot3"><i></i><i></i><i></i></span><span class="u">Caisse — mardi 18 août 2026</span><span class="hint">glissez →</span></div>
-        <div class="shot-scroll"><img src="img/app-caisse.png" alt="La caisse du jour : encaissements, avoirs, dépenses et net, la répartition par mode de paiement, puis l'extrait de caisse mouvement par mouvement." width="1500" height="1000"></div>
+        <div class="frame-bar"><span class="dot3"><i></i><i></i><i></i></span><span class="u">Caisse — mardi 18 août 2026</span></div>
+        <picture class="shot">
+          <source media="(max-width: 47rem)" srcset="img/mobile/m-caisse.png" width="390" height="844">
+          <img src="img/app-caisse.png" alt="La caisse du jour : encaissements, avoirs, dépenses et net, la répartition par mode de paiement, puis l'extrait de caisse mouvement par mouvement." width="1500" height="1000">
+        </picture>
         <div class="call tl" style="left: 18%; top: 37%">Espèces, chèque, carte, virement — <b>séparés, jamais additionnés à l'aveugle</b></div>
         <div class="call br" style="right: 6%; top: 77%">Le chèque porte son n°, sa banque et sa date d'encaissement</div>
       </div>
@@ -667,8 +704,11 @@ footer { padding: 2.5rem 0 3.5rem; border-top: 1px solid var(--rule-soft); font-
     </div>
     <div class="shot-hold rise d2">
       <div class="frame drift" data-drift="12">
-        <div class="frame-bar"><span class="dot3"><i></i><i></i><i></i></span><span class="u">Tableau de bord — l'activité et l'argent</span><span class="hint">glissez →</span></div>
-        <div class="shot-scroll"><img src="img/app-argent3.png" alt="Les sections Activité et Argent du tableau de bord : taux d'absence, nouveaux patients, net, encaissé, dépenses, la tendance sur six mois et la répartition des actes." width="1500" height="1000"></div>
+        <div class="frame-bar"><span class="dot3"><i></i><i></i><i></i></span><span class="u">Tableau de bord — l'activité et l'argent</span></div>
+        <picture class="shot">
+          <source media="(max-width: 47rem)" srcset="img/mobile/m-argent.png" width="390" height="844">
+          <img src="img/app-argent3.png" alt="Les sections Activité et Argent du tableau de bord : taux d'absence, nouveaux patients, net, encaissé, dépenses, la tendance sur six mois et la répartition des actes." width="1500" height="1000">
+        </picture>
         <div class="call tr" style="right: 4%; top: 54%">La répartition des actes : <b>où part vraiment le temps au fauteuil</b></div>
       </div>
     </div>
