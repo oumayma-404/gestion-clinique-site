@@ -1,0 +1,875 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Logiciel de gestion pour cabinets dentaires et médicaux en Tunisie : agenda, dossier patient, odontogramme, devis, CNAM, caisse et stock — en français, et hors ligne si vous le voulez.">
+<meta name="theme-color" content="#f0f9fe" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1c1d20" media="(prefers-color-scheme: dark)">
+<meta property="og:title" content="Une journée au cabinet — Gestion Clinique">
+<meta property="og:description" content="Logiciel de gestion pour cabinets dentaires et médicaux en Tunisie : agenda, dossier patient, odontogramme, devis, CNAM, caisse et stock — en français, et hors ligne si vous le voulez.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="img/app-dashboard.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='118' fill='%2302678F'/><path d='M256 128C196 128 152 162 152 214C152 252 160 286 168 322C174 350 180 380 190 392C200 404 214 400 218 382C226 344 234 316 244 300C248 292 264 292 268 300C278 316 286 344 294 382C298 400 312 404 322 392C332 380 338 350 344 322C352 286 360 252 360 214C360 162 316 128 256 128Z' fill='%23F9FCFF'/></svg>">
+<title>Une journée au cabinet</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,300..700&family=Geist:wght@300..800&family=Geist+Mono:wght@400;500&display=swap">
+
+<style>
+/* ═══════════════════════════════════════════════════════════════════════════
+   Tokens lifted verbatim from web/app/globals.css — the page and the product
+   are the same object. Every oklch below is already gamut-verified in the app.
+   ═══════════════════════════════════════════════════════════════════════════ */
+:root {
+  --ground:      oklch(0.977 0.011 230);
+  --ground-deep: oklch(0.958 0.013 231);
+  --paper:       oklch(1 0 0);
+  --ink:         oklch(0.205 0.020 236);
+  --ink-muted:   oklch(0.50  0.021 234);
+  --ink-faint:   oklch(0.62  0.018 234);
+  --azure:       oklch(0.485 0.101 234);
+  --azure-lift:  oklch(0.615 0.128 234);
+  --azure-wash:  oklch(0.948 0.031 230);
+  --rule:        oklch(0.91  0.013 230);
+  --rule-soft:   oklch(0.945 0.012 230);
+
+  --amber:       oklch(0.62 0.13 72);
+  --amber-ink:   oklch(0.45 0.11 62);
+  --amber-wash:  oklch(0.965 0.045 80);
+  --green:       oklch(0.47 0.11 155);
+  --green-wash:  oklch(0.955 0.035 155);
+  --violet:      oklch(0.48 0.135 308);
+  --violet-wash: oklch(0.957 0.028 308);
+  --red:         oklch(0.55 0.19 25);
+
+  --hero-from:   oklch(0.455 0.095 234);
+  --hero-to:     oklch(0.345 0.088 246);
+  --hero-glow:   oklch(0.60  0.122 232);
+
+  --r: 0.75rem;
+  --shadow-card: 0 1px 2px oklch(0.42 0.05 235 / 0.06), 0 8px 24px -12px oklch(0.42 0.05 235 / 0.14);
+  --shadow-lift: 0 2px 4px oklch(0.42 0.05 235 / 0.07), 0 18px 40px -18px oklch(0.42 0.05 235 / 0.20);
+  --shadow-shot: 0 2px 6px oklch(0.35 0.05 238 / 0.10), 0 30px 70px -26px oklch(0.35 0.05 238 / 0.34);
+
+  --measure: 34rem;
+  --rail: 5.5rem;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:      oklch(0.245 0.006 268);
+    --ground-deep: oklch(0.218 0.006 268);
+    --paper:       oklch(0.305 0.006 265);
+    --ink:         oklch(0.895 0.004 260);
+    --ink-muted:   oklch(0.685 0.008 265);
+    --ink-faint:   oklch(0.605 0.008 265);
+    --azure:       oklch(0.72  0.125 234);
+    --azure-lift:  oklch(0.78  0.120 234);
+    --azure-wash:  oklch(0.368 0.030 245);
+    --rule:        oklch(0.372 0.008 268);
+    --rule-soft:   oklch(0.340 0.007 266);
+    --amber:       oklch(0.78 0.13 78);
+    --amber-ink:   oklch(0.87 0.11 80);
+    --amber-wash:  oklch(0.355 0.048 78);
+    --green:       oklch(0.72 0.13 155);
+    --green-wash:  oklch(0.340 0.042 155);
+    --violet:      oklch(0.755 0.11 308);
+    --violet-wash: oklch(0.360 0.040 308);
+    --red:         oklch(0.70 0.155 25);
+    --hero-from:   oklch(0.455 0.088 234);
+    --hero-to:     oklch(0.345 0.082 248);
+    --shadow-card: 0 1px 2px oklch(0 0 0 / 0.30), 0 10px 28px -14px oklch(0 0 0 / 0.55);
+    --shadow-lift: 0 2px 6px oklch(0 0 0 / 0.34), 0 22px 48px -20px oklch(0 0 0 / 0.62);
+    --shadow-shot: 0 2px 8px oklch(0 0 0 / 0.40), 0 34px 80px -28px oklch(0 0 0 / 0.75);
+  }
+}
+:root[data-theme="dark"] {
+  --ground:      oklch(0.245 0.006 268);
+  --ground-deep: oklch(0.218 0.006 268);
+  --paper:       oklch(0.305 0.006 265);
+  --ink:         oklch(0.895 0.004 260);
+  --ink-muted:   oklch(0.685 0.008 265);
+  --ink-faint:   oklch(0.605 0.008 265);
+  --azure:       oklch(0.72  0.125 234);
+  --azure-lift:  oklch(0.78  0.120 234);
+  --azure-wash:  oklch(0.368 0.030 245);
+  --rule:        oklch(0.372 0.008 268);
+  --rule-soft:   oklch(0.340 0.007 266);
+  --amber:       oklch(0.78 0.13 78);
+  --amber-ink:   oklch(0.87 0.11 80);
+  --amber-wash:  oklch(0.355 0.048 78);
+  --green:       oklch(0.72 0.13 155);
+  --green-wash:  oklch(0.340 0.042 155);
+  --violet:      oklch(0.755 0.11 308);
+  --violet-wash: oklch(0.360 0.040 308);
+  --red:         oklch(0.70 0.155 25);
+  --hero-from:   oklch(0.455 0.088 234);
+  --hero-to:     oklch(0.345 0.082 248);
+  --shadow-card: 0 1px 2px oklch(0 0 0 / 0.30), 0 10px 28px -14px oklch(0 0 0 / 0.55);
+  --shadow-lift: 0 2px 6px oklch(0 0 0 / 0.34), 0 22px 48px -20px oklch(0 0 0 / 0.62);
+  --shadow-shot: 0 2px 8px oklch(0 0 0 / 0.40), 0 34px 80px -28px oklch(0 0 0 / 0.75);
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--ground); color: var(--ink);
+  font-family: "Geist", ui-sans-serif, system-ui, sans-serif;
+  font-size: 1rem; line-height: 1.6; -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+h1, h2, h3, h4 { margin: 0; text-wrap: balance; }
+p { margin: 0; }
+img { display: block; max-width: 100%; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--azure); outline-offset: 3px; border-radius: 4px; }
+
+.display {
+  font-family: "Fraunces", ui-serif, Georgia, serif;
+  font-optical-sizing: auto; font-variation-settings: "SOFT" 0, "WONK" 1;
+  font-weight: 500; letter-spacing: -0.015em; line-height: 1.08;
+}
+.mono { font-family: "Geist Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+.eyebrow {
+  font-family: "Geist Mono", ui-monospace, monospace; font-size: 0.6875rem;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-muted);
+}
+.wrap { max-width: 76rem; margin: 0 auto; padding: 0 1.5rem; }
+
+/* ── Nav ────────────────────────────────────────────────────────────────── */
+nav {
+  position: sticky; top: 0; z-index: 60;
+  background: color-mix(in oklab, var(--ground) 86%, transparent);
+  backdrop-filter: blur(12px) saturate(1.4);
+  border-bottom: 1px solid var(--rule-soft);
+}
+.nav-in { display: flex; align-items: center; gap: 1rem; height: 4rem; }
+.brand { display: flex; align-items: center; gap: 0.625rem; font-weight: 600; letter-spacing: -0.01em; text-decoration: none; white-space: nowrap; }
+.brand svg { width: 1.75rem; height: 1.75rem; flex: none; }
+@media (max-width: 26rem) { .brand { font-size: 0.9375rem; } .brand svg { width: 1.5rem; height: 1.5rem; } }
+@media (max-width: 30rem) { .nav-in .btn { padding: 0 0.75rem; font-size: 0.875rem; white-space: nowrap; } }
+.nav-sp { flex: 1; }
+.nav-links { display: flex; gap: 1.625rem; font-size: 0.875rem; color: var(--ink-muted); }
+.nav-links a { text-decoration: none; }
+.nav-links a:hover { color: var(--ink); }
+@media (max-width: 56rem) { .nav-links { display: none; } }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 0.5rem; min-height: 2.75rem;
+  padding: 0 1.125rem; border-radius: calc(var(--r) - 2px);
+  font-size: 0.9375rem; font-weight: 500; text-decoration: none;
+  border: 1px solid transparent; cursor: pointer;
+  transition: transform 160ms cubic-bezier(.2,.7,.3,1), box-shadow 160ms, border-color 160ms;
+}
+.btn-primary { background: var(--azure); color: oklch(0.99 0.005 234); box-shadow: var(--shadow-card); }
+:root[data-theme="dark"] .btn-primary { color: oklch(0.20 0.030 240); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .btn-primary { color: oklch(0.20 0.030 240); } }
+.btn-primary:hover { box-shadow: var(--shadow-lift); }
+.btn-ghost { border-color: var(--rule); color: var(--ink); background: var(--paper); }
+.btn-ghost:hover { border-color: var(--azure); }
+@media (hover: hover) and (pointer: fine) { .btn:hover { transform: translateY(-1px); } }
+
+/* ── Time rail ──────────────────────────────────────────────────────────── */
+main { position: relative; }
+.rail { position: absolute; inset-block: 0; left: max(1.5rem, calc(50% - 38rem + 1.5rem)); width: var(--rail); pointer-events: none; }
+.rail-line { position: absolute; top: 0; bottom: 0; left: 0.5rem; width: 1px; background: var(--rule); }
+.rail-fill { position: absolute; top: 0; left: 0.5rem; width: 1px; height: calc(var(--progress, 0) * 100%); background: linear-gradient(var(--azure), var(--azure-lift)); }
+@media (max-width: 61rem) { .rail { display: none; } }
+
+.hour { position: relative; padding: 5.5rem 0; }
+.hour + .hour { border-top: 1px solid var(--rule-soft); }
+.hour-body { max-width: var(--measure); }
+@media (min-width: 61rem) { .hour-body, .hour > .shot-hold, .hour > .cards { margin-left: calc(var(--rail) + 1.5rem); } }
+
+.tick { display: flex; align-items: baseline; gap: 0.75rem; margin-bottom: 1.25rem; }
+.tick-dot { display: none; }
+@media (min-width: 61rem) {
+  /* `.hour` IS the centred `.wrap`, so an absolute child resolves against its padding box */
+  .tick { position: absolute; left: 1.5rem; margin: 0; display: block; width: var(--rail); }
+  .tick-dot { display: block; position: absolute; left: 0.5rem; top: 0.55rem; width: 9px; height: 9px; translate: -4px 0; border-radius: 50%; background: var(--ground); border: 1.5px solid var(--rule); transition: border-color 300ms, background-color 300ms, scale 300ms cubic-bezier(.2,.7,.3,1); }
+  .is-live .tick-dot { border-color: var(--azure); background: var(--azure); scale: 1.45; }
+  .tick-time { display: block; padding-left: 1.5rem; }
+}
+.tick-time { font-family: "Geist Mono", monospace; font-size: 0.8125rem; color: var(--ink-faint); font-variant-numeric: tabular-nums; transition: color 300ms; }
+.is-live .tick-time { color: var(--azure); }
+
+/* ── Reveal (a touch more travel + scale than a plain fade) ─────────────── */
+.rise { opacity: 0; translate: 0 20px; transition: opacity 700ms ease, translate 700ms cubic-bezier(.2,.75,.25,1); }
+.rise.in { opacity: 1; translate: 0 0; }
+.rise.d1 { transition-delay: 80ms; } .rise.d2 { transition-delay: 160ms; }
+.rise.d3 { transition-delay: 240ms; } .rise.d4 { transition-delay: 320ms; }
+
+/* ── Hero ───────────────────────────────────────────────────────────────── */
+.hero { padding: 4.5rem 0 1rem; }
+.hero .hour-body { max-width: 47rem; }
+.hero-kicker {
+  display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 1.75rem;
+  padding: 0.3125rem 0.75rem 0.3125rem 0.625rem;
+  border: 1px solid var(--rule); border-radius: 999px; background: var(--paper);
+  font-size: 0.75rem; color: var(--ink-muted);
+}
+.pulse { width: 6px; height: 6px; border-radius: 50%; background: var(--green); flex: none; animation: beat 2.4s ease-in-out infinite; }
+@keyframes beat { 0%,100% { opacity: 1; scale: 1; } 50% { opacity: .45; scale: .8; } }
+.hero h1 { font-size: clamp(2.5rem, 6.2vw, 4.25rem); max-width: 25ch; }
+.hero h1 em { font-style: italic; color: var(--azure); }
+.hero-lede { margin-top: 1.5rem; max-width: 47ch; font-size: 1.1875rem; color: var(--ink-muted); }
+.hero-cta { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 2.25rem; align-items: center; }
+.hero-note { font-size: 0.8125rem; color: var(--ink-faint); }
+
+/* ── Screenshot frames ──────────────────────────────────────────────────── */
+.shot-hold { margin-top: 3rem; position: relative; }
+.frame {
+  position: relative; border-radius: 0.875rem; overflow: hidden;
+  background: var(--paper); border: 1px solid var(--rule);
+  box-shadow: var(--shadow-shot);
+}
+.frame-bar {
+  display: flex; align-items: center; gap: 0.625rem;
+  padding: 0.6875rem 0.875rem; border-bottom: 1px solid var(--rule-soft);
+  font-size: 0.75rem; color: var(--ink-faint); background: var(--paper);
+}
+.dot3 { display: flex; gap: 5px; flex: none; }
+.dot3 i { width: 8px; height: 8px; border-radius: 50%; background: var(--rule); display: block; }
+.frame-bar .u { font-family: "Geist Mono", monospace; letter-spacing: 0.02em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.frame img { width: 100%; height: auto; }
+
+/* A 1500 px product screenshot scaled to a 375 px phone is unreadable mush. Rather than hide
+   it (which loses the point) or ship a second cropped set (which doubles the page weight),
+   the image keeps a legible minimum width and scrolls inside its own container — the same
+   rule the app itself follows for wide content. The frame bar stays put because the scroller
+   wraps only the image. */
+/* The agenda capture carries ~a third of empty grid below the last appointment. On a light
+   ground it blends; on a dark one it reads as a rendering fault. Cropped in CSS so the PNG
+   is never re-encoded and the change stays one line. */
+.shot-scroll.crop-66 img { aspect-ratio: 1500 / 660; object-fit: cover; object-position: top center; }
+.shot-scroll { overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
+.frame-bar .hint { display: none; margin-left: auto; white-space: nowrap; color: var(--azure); font-family: "Geist Mono", monospace; font-size: 0.6875rem; letter-spacing: 0.06em; }
+@media (max-width: 47rem) {
+  .shot-scroll img { min-width: 46rem; }
+  .frame-bar .hint { display: inline; }
+}
+
+/* the hero shot: lands from a slight 3D tilt, then drifts on scroll */
+.hero-shot { perspective: 1600px; margin-top: 3.5rem; }
+.hero-shot .frame {
+  transform: rotateX(9deg) translateY(26px) scale(0.975);
+  opacity: 0;
+  animation: shot-land 1150ms cubic-bezier(.16,.84,.24,1) 240ms forwards;
+  will-change: transform, opacity;
+}
+@keyframes shot-land {
+  to { transform: rotateX(0deg) translateY(0) scale(1); opacity: 1; }
+}
+.hero-shot::after {
+  content: ""; position: absolute; inset: auto 12% -2.5rem 12%; height: 5rem; z-index: -1;
+  background: radial-gradient(50% 100% at 50% 0%, color-mix(in oklab, var(--hero-glow) 34%, transparent), transparent 72%);
+  filter: blur(18px);
+}
+
+/* scroll drift — set by JS, cheap and subtle */
+.drift { will-change: transform; transform: translateY(var(--drift, 0px)); }
+
+/* ── Callouts pinned onto a screenshot ──────────────────────────────────── */
+.call {
+  position: absolute; z-index: 4; max-width: 15rem;
+  background: var(--ink); color: var(--ground);
+  padding: 0.5rem 0.75rem; border-radius: 0.5rem;
+  font-size: 0.75rem; line-height: 1.4; font-weight: 500;
+  box-shadow: var(--shadow-lift);
+  opacity: 0; translate: 0 6px; scale: .96;
+  transition: opacity 520ms ease, translate 520ms cubic-bezier(.2,.7,.3,1), scale 520ms cubic-bezier(.2,.7,.3,1);
+}
+.in .call, .call.in { opacity: 1; translate: 0 0; scale: 1; }
+.call b { color: oklch(0.80 0.10 234); font-weight: 600; }
+:root[data-theme="dark"] .call { background: oklch(0.20 0.020 240); color: oklch(0.94 0.004 260); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .call { background: oklch(0.20 0.020 240); color: oklch(0.94 0.004 260); } }
+.call::after {
+  content: ""; position: absolute; width: 9px; height: 9px; background: inherit;
+  rotate: 45deg; border-radius: 2px;
+}
+.call.bl::after { left: 1.25rem; bottom: -4px; }
+.call.tl::after { left: 1.25rem; top: -4px; }
+.call.tr::after { right: 1.25rem; top: -4px; }
+.call.br::after { right: 1.25rem; bottom: -4px; }
+.call .d { transition-delay: inherit; }
+@media (max-width: 47rem) { .call { display: none; } }
+
+/* ── Section type ───────────────────────────────────────────────────────── */
+.h2 { font-size: clamp(1.875rem, 3.6vw, 2.625rem); }
+.lede { margin-top: 1rem; font-size: 1.0625rem; color: var(--ink-muted); max-width: 50ch; }
+.lines { margin-top: 2.5rem; display: grid; gap: 1.375rem; }
+.line { display: grid; grid-template-columns: 1.25rem 1fr; gap: 0.875rem; align-items: start; }
+.line .tk { width: 1.125rem; height: 1.125rem; margin-top: 0.3125rem; color: var(--azure); flex: none; }
+.line b { font-weight: 600; letter-spacing: -0.005em; }
+.line span { color: var(--ink-muted); }
+
+/* ── The loop ───────────────────────────────────────────────────────────── */
+.loop-sec { padding: 6rem 0; background: var(--ground-deep); border-block: 1px solid var(--rule-soft); }
+.loop-head { max-width: 42rem; margin: 0 auto 3.5rem; text-align: center; }
+.loop-head h2 { font-size: clamp(1.875rem, 4vw, 2.75rem); }
+.loop-head p { margin-top: 1.125rem; color: var(--ink-muted); font-size: 1.0625rem; }
+
+.chain { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.75rem; align-items: stretch; position: relative; }
+@media (max-width: 61rem) { .chain { grid-template-columns: repeat(3, 1fr); gap: 0.625rem; } }
+@media (max-width: 34rem) { .chain { grid-template-columns: repeat(2, 1fr); } }
+.node {
+  background: var(--paper); border: 1px solid var(--rule); border-radius: var(--r);
+  padding: 1rem 0.875rem 1.125rem; position: relative;
+  transition: border-color 420ms, box-shadow 420ms, transform 420ms cubic-bezier(.2,.7,.3,1), background-color 420ms;
+}
+.node .n { font-family: "Geist Mono", monospace; font-size: 0.625rem; color: var(--ink-faint); letter-spacing: 0.08em; }
+.node .ic { width: 2rem; height: 2rem; border-radius: 0.5rem; display: grid; place-items: center; margin: 0.625rem 0 0.75rem; background: var(--azure-wash); color: var(--azure); transition: background-color 420ms, color 420ms, scale 420ms cubic-bezier(.2,.7,.3,1); }
+.node .ic svg { width: 1.0625rem; height: 1.0625rem; }
+.node b { display: block; font-size: 0.875rem; font-weight: 600; letter-spacing: -0.008em; }
+.node span { display: block; margin-top: 0.25rem; font-size: 0.75rem; color: var(--ink-muted); line-height: 1.45; }
+.node.lit {
+  border-color: var(--azure); background: color-mix(in oklab, var(--azure) 4%, var(--paper));
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--azure) 12%, transparent), var(--shadow-lift);
+  transform: translateY(-3px);
+}
+.node.lit .ic { background: var(--azure); color: oklch(0.99 0.005 234); scale: 1.06; }
+:root[data-theme="dark"] .node.lit .ic { color: oklch(0.20 0.03 240); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .node.lit .ic { color: oklch(0.20 0.03 240); } }
+
+.loop-return {
+  margin-top: 1rem; display: flex; align-items: center; gap: 0.875rem;
+  font-size: 0.8125rem; color: var(--ink-muted);
+}
+.loop-return .track { flex: 1; height: 2px; border-radius: 2px; background: var(--rule); position: relative; overflow: hidden; }
+.loop-return .track i {
+  position: absolute; inset-block: 0; width: 28%; border-radius: 2px;
+  background: linear-gradient(90deg, transparent, var(--azure), transparent);
+  animation: travel 3.4s linear infinite;
+}
+@keyframes travel { from { left: -30%; } to { left: 102%; } }
+.loop-return .lbl { font-family: "Geist Mono", monospace; font-size: 0.6875rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--azure); white-space: nowrap; }
+/* Below the 6-across breakpoint the sentence eats the row and `flex: 1` leaves the pulse
+   track at zero width — i.e. the one element carrying the "it loops" motif disappears.
+   Stack instead, so the track always spans the full width. */
+@media (max-width: 61rem) {
+  .loop-return { flex-direction: column; align-items: stretch; gap: 0.75rem; }
+  .loop-return .track { flex: none; width: 100%; }
+}
+
+.loop-foot { margin-top: 3rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 1.5rem; }
+.loop-foot div { padding-top: 1.125rem; border-top: 2px solid var(--rule); }
+.loop-foot b { display: block; font-size: 0.9375rem; font-weight: 600; margin-bottom: 0.375rem; }
+.loop-foot p { font-size: 0.875rem; color: var(--ink-muted); }
+
+/* ── Cards ──────────────────────────────────────────────────────────────── */
+.cards { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); margin-top: 2.75rem; }
+.card {
+  background: var(--paper); border: 1px solid var(--rule); border-radius: var(--r);
+  padding: 1.375rem;
+  transition: transform 220ms cubic-bezier(.2,.7,.3,1), box-shadow 220ms, border-color 220ms;
+}
+@media (hover: hover) and (pointer: fine) {
+  .card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lift); border-color: color-mix(in oklab, var(--azure) 35%, var(--rule)); }
+}
+.card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.4375rem; letter-spacing: -0.005em; }
+.card p { font-size: 0.875rem; color: var(--ink-muted); }
+.card .ico { width: 2.25rem; height: 2.25rem; border-radius: 9px; display: grid; place-items: center; margin-bottom: 0.875rem; background: var(--azure-wash); color: var(--azure); }
+.card .ico svg { width: 1.125rem; height: 1.125rem; }
+.card.vio .ico { background: var(--violet-wash); color: var(--violet); }
+.card.grn .ico { background: var(--green-wash); color: var(--green); }
+.card.amb .ico { background: var(--amber-wash); color: var(--amber-ink); }
+
+/* ── Coverage grid ("tout est couvert") ─────────────────────────────────── */
+.cover { padding: 6rem 0; }
+.cover-head { max-width: 44rem; margin-bottom: 3.25rem; }
+.cover-head h2 { font-size: clamp(1.875rem, 4vw, 2.75rem); }
+.cover-head p { margin-top: 1.125rem; color: var(--ink-muted); font-size: 1.0625rem; }
+.zones { display: grid; gap: 1px; background: var(--rule-soft); border: 1px solid var(--rule-soft); border-radius: var(--r); overflow: hidden; }
+.zgrp { background: var(--paper); padding: 1.5rem 1.625rem 1.75rem; }
+.zgrp .zt { display: flex; align-items: baseline; gap: 0.75rem; margin-bottom: 1.125rem; }
+.zgrp .zt .lbl { font-family: "Geist Mono", monospace; font-size: 0.6875rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--zc); }
+.zgrp .zt .ln { flex: 1; height: 1px; background: var(--rule-soft); }
+.zitems { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: 1rem 1.75rem; }
+.zi { display: grid; grid-template-columns: 1rem 1fr; gap: 0.625rem; align-items: start; font-size: 0.875rem; }
+.zi .mk { width: 0.9375rem; height: 0.9375rem; margin-top: 0.25rem; color: var(--zc); flex: none; }
+.zi b { font-weight: 600; }
+.zi span { color: var(--ink-muted); }
+
+/* ── Reassurance band ───────────────────────────────────────────────────── */
+.band { padding: 5.5rem 0; background: var(--ground-deep); border-block: 1px solid var(--rule-soft); }
+.band-in { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 3.5rem; align-items: center; }
+@media (max-width: 61rem) { .band-in { grid-template-columns: 1fr; gap: 2.5rem; } }
+.band h2 { font-size: clamp(1.75rem, 3.4vw, 2.375rem); }
+.band .lede { margin-top: 1rem; }
+.keeps { display: grid; gap: 0.875rem; }
+.keep {
+  background: var(--paper); border: 1px solid var(--rule); border-radius: var(--r);
+  padding: 1.125rem 1.25rem; display: grid; grid-template-columns: 2.25rem 1fr auto; gap: 0.875rem; align-items: center;
+}
+.keep .ic { width: 2.25rem; height: 2.25rem; border-radius: 0.5rem; display: grid; place-items: center; background: color-mix(in oklab, var(--zc) 11%, var(--paper)); color: var(--zc); }
+.keep .ic svg { width: 1.125rem; height: 1.125rem; }
+.keep b { display: block; font-size: 0.9375rem; }
+.keep span { font-size: 0.8125rem; color: var(--ink-muted); }
+.keep .pill { font-family: "Geist Mono", monospace; font-size: 0.625rem; letter-spacing: 0.06em; padding: 0.1875rem 0.5rem; border-radius: 999px; background: color-mix(in oklab, var(--zc) 13%, var(--paper)); color: var(--zc); white-space: nowrap; }
+
+/* ── Close ──────────────────────────────────────────────────────────────── */
+.close { padding: 6.5rem 0 4rem; text-align: center; }
+.close h2 { font-size: clamp(2rem, 4.6vw, 3.125rem); max-width: 26ch; margin: 0 auto; }
+.close p { margin: 1.25rem auto 0; max-width: 46ch; color: var(--ink-muted); font-size: 1.0625rem; }
+.close .hero-cta { justify-content: center; }
+.spec { margin-top: 4.5rem; padding-top: 2rem; border-top: 1px solid var(--rule-soft); display: grid; gap: 1.75rem; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); text-align: left; }
+.spec div b { display: block; font-family: "Geist Mono", monospace; font-size: 1.125rem; color: var(--azure); font-variant-numeric: tabular-nums; }
+.spec div span { font-size: 0.8125rem; color: var(--ink-muted); }
+
+footer { padding: 2.5rem 0 3.5rem; border-top: 1px solid var(--rule-soft); font-size: 0.8125rem; color: var(--ink-faint); }
+.foot-in { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; }
+.foot-in span:last-child { margin-left: auto; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+  .rise { opacity: 1; translate: 0 0; }
+  .call { opacity: 1; translate: 0 0; scale: 1; }
+  .hero-shot .frame { opacity: 1; transform: none; }
+  .drift { transform: none !important; }
+}
+</style>
+
+</head>
+<body>
+<nav>
+  <div class="wrap nav-in">
+    <a class="brand" href="#">
+      <svg viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="118" fill="var(--azure)"/><path d="M256 128C196 128 152 162 152 214C152 252 160 286 168 322C174 350 180 380 190 392C200 404 214 400 218 382C226 344 234 316 244 300C248 292 264 292 268 300C278 316 286 344 294 382C298 400 312 404 322 392C332 380 338 350 344 322C352 286 360 252 360 214C360 162 316 128 256 128Z" fill="oklch(0.99 0.005 234)"/></svg>
+      Gestion Clinique
+    </a>
+    <div class="nav-sp"></div>
+    <div class="nav-links">
+      <a href="#boucle">La boucle</a>
+      <a href="#h08">L'agenda</a>
+      <a href="#h10">Le fauteuil</a>
+      <a href="#h18">La caisse</a>
+      <a href="#tout">Tout le reste</a>
+    </div>
+    <a class="btn btn-primary" href="#fin">Essayer 30 jours</a>
+  </div>
+</nav>
+
+<main>
+  <div class="rail" aria-hidden="true"><div class="rail-line"></div><div class="rail-fill"></div></div>
+
+  <!-- ══ Hero ═══════════════════════════════════════════════════════════ -->
+  <header class="hero wrap" id="top">
+    <div class="hour-body">
+      <span class="hero-kicker rise"><i class="pulse"></i> Cabinets dentaires &amp; médicaux · Tunisie</span>
+      <h1 class="display rise d1">Votre cabinet, du premier café à la <em>dernière facture.</em></h1>
+      <p class="hero-lede rise d2">Agenda, dossier patient, odontogramme, devis, CNAM, caisse, stock, laboratoire. Un seul logiciel, en français — et tout y est relié, donc rien ne se retape et rien ne se perd.</p>
+      <div class="hero-cta rise d3">
+        <a class="btn btn-primary" href="#fin">Essayer 30 jours</a>
+        <a class="btn btn-ghost" href="#boucle">Voir comment tout se relie</a>
+        <span class="hero-note">Sans carte bancaire</span>
+      </div>
+    </div>
+
+    <div class="hero-shot">
+      <div class="frame">
+        <div class="frame-bar"><span class="dot3"><i></i><i></i><i></i></span><span class="u">Tableau de bord — mardi 18 août</span><span class="hint">glissez →</span></div>
+        <div class="shot-scroll"><img src="img/app-dashboard.png" alt="Le tableau de bord : la journée en ruban, les séances à clôturer, l'activité et l'argent du cabinet." width="1500" height="1000"></div>
+        <div class="call tl" style="left: 30%; top: 70%; transition-delay: 1.45s">Le ruban de la journée : <b>4 RDV, 5 actes, 3 h 20 au fauteuil, fin prévue 15:50</b></div>
+        <div class="call bl" style="left: 22%; top: 8%; transition-delay: 1.15s">Une séance passée attend encore une présence, une fiche ou un encaissement — <b>le logiciel le sait tout seul</b></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ══ The loop ═══════════════════════════════════════════════════════ -->
+  <section class="loop-sec" id="boucle">
+    <div class="wrap">
+      <div class="loop-head">
+        <p class="eyebrow rise">Ce qui change vraiment</p>
+        <h2 class="display h2 rise d1">Une seule saisie fait tout le tour.</h2>
+        <p class="rise d2">Dans la plupart des cabinets, la même séance est écrite quatre fois : sur l'agenda, sur la fiche, sur le devis, puis sur le reçu. Ici elle est écrite une fois et chaque écran suivant la connaît déjà.</p>
+      </div>
+
+      <div class="chain" id="chain">
+        <div class="node">
+          <span class="n">01</span>
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg></span>
+          <b>Le rendez-vous</b>
+          <span>Le patient est posé à l'agenda avec ses actes.</span>
+        </div>
+        <div class="node">
+          <span class="n">02</span>
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3c-4 0-6 2.3-6 5.7 0 2.6.6 4.9 1.1 7.3.4 1.9.8 4 1.5 4.8.7.8 1.6.6 1.9-.6.5-2.6 1.1-4.5 1.5-5.5"/><path d="M12 3c4 0 6 2.3 6 5.7 0 2.6-.6 4.9-1.1 7.3-.4 1.9-.8 4-1.5 4.8-.7.8-1.6.6-1.9-.6-.5-2.6-1.1-4.5-1.5-5.5"/></svg></span>
+          <b>L'odontogramme</b>
+          <span>Les dents chartées deviennent la fiche de soins.</span>
+        </div>
+        <div class="node">
+          <span class="n">03</span>
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M9 15h6"/></svg></span>
+          <b>Le devis</b>
+          <span>Créé depuis l'odontogramme, avec son échéancier.</span>
+        </div>
+        <div class="node">
+          <span class="n">04</span>
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 3h16v18l-4-2-4 2-4-2-4 2z"/><path d="M8 8h8M8 12h5"/></svg></span>
+          <b>La note d'honoraires</b>
+          <span>Reprend le devis et les acomptes déjà versés.</span>
+        </div>
+        <div class="node">
+          <span class="n">05</span>
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg></span>
+          <b>La caisse</b>
+          <span>Le paiement tombe dans l'extrait du jour.</span>
+        </div>
+        <div class="node">
+          <span class="n">06</span>
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+          <b>Le rappel</b>
+          <span>Le prochain RDV part en SMS ou WhatsApp.</span>
+        </div>
+      </div>
+
+      <div class="loop-return">
+        <span class="lbl">et ça recommence</span>
+        <span class="track"><i></i></span>
+        <span>Un RDV déplacé re-planifie son rappel. Un devis accepté met à jour l'état de chaque acte. Rien à resynchroniser.</span>
+      </div>
+
+      <div class="loop-foot">
+        <div class="rise"><b>Aucune double saisie</b><p>La fiche de soins produit la note d'honoraires, qui produit l'encaissement. Le montant n'est tapé qu'une fois.</p></div>
+        <div class="rise d1"><b>Les chiffres se mettent à jour seuls</b><p>Le tableau de bord, la caisse et le solde du patient lisent les mêmes écritures — ils ne peuvent pas se contredire.</p></div>
+        <div class="rise d2"><b>L'équipe voit la même chose</b><p>Une modification à l'accueil apparaît immédiatement sur l'écran du fauteuil, sans rafraîchir.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 08:00 ══════════════════════════════════════════════════════════ -->
+  <section class="hour wrap" id="h08">
+    <div class="tick"><span class="tick-dot"></span><span class="tick-time">08:00</span></div>
+    <div class="hour-body">
+      <p class="eyebrow rise">La salle se remplit</p>
+      <h2 class="display h2 rise d1">Un agenda qui ne double-réserve jamais.</h2>
+      <p class="lede rise d2">Jour, semaine, mois. Une séance porte plusieurs actes et calcule sa durée. Le créneau est verrouillé dans la base de données — pas seulement dans l'écran.</p>
+    </div>
+    <div class="shot-hold rise d2">
+      <div class="frame drift" data-drift="14">
+        <div class="frame-bar"><span class="dot3"><i></i><i></i><i></i></span><span class="u">Rendez-vous — semaine du 17 au 23 août</span><span class="hint">glissez →</span></div>
+        <div class="shot-scroll crop-66"><img src="img/app-agenda.png" alt="L'agenda hebdomadaire du cabinet, chaque acte dans sa couleur, la journée du jour surlignée." width="1500" height="1000"></div>
+      </div>
+    </div>
+    <div class="cards">
+      <div class="card rise">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg></div>
+        <h3>Séances multi-actes</h3>
+        <p>« Détartrage + deux obturations » est une seule visite, avec sa vraie durée et sa vraie couleur.</p>
+      </div>
+      <div class="card grn rise d1">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+        <h3>Rappels SMS &amp; WhatsApp</h3>
+        <p>Plusieurs paliers — 24 h puis 6 h — et jamais entre 21 h et 8 h.</p>
+      </div>
+      <div class="card vio rise d2">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14 0 18-3-4-3-14.5 0-18Z"/></svg></div>
+        <h3>Google Calendar</h3>
+        <p>Synchronisé dans les deux sens, avec un badge clair sur ce qui ne l'est pas encore.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 10:30 — the odontogram ═════════════════════════════════════════ -->
+  <section class="hour wrap" id="h10">
+    <div class="tick"><span class="tick-dot"></span><span class="tick-time">10:30</span></div>
+    <div class="hour-body">
+      <p class="eyebrow rise">Au fauteuil</p>
+      <h2 class="display h2 rise d1">Le dossier, dent par dent.</h2>
+      <p class="lede rise d2">Un odontogramme adulte, enfant et mixte. On clique une dent pour noter un diagnostic ; les actes réalisés s'ajoutent tout seuls quand la fiche de soins est enregistrée. Et de ce même schéma on crée le devis.</p>
+    </div>
+    <div class="shot-hold rise d2">
+      <div class="frame drift" data-drift="18">
+        <div class="frame-bar"><span class="dot3"><i></i><i></i><i></i></span><span class="u">Karim Hamdi — odontogramme</span><span class="hint">glissez →</span></div>
+        <div class="shot-scroll"><img src="img/crop-odonto.png" alt="L'odontogramme de la fiche patient : chaque dent colorée selon son état, avec la légende carie, obturation, couronne, traitement de canal, extraite, à traiter." width="1181" height="426"></div>
+        <div class="call tr" style="right: 3%; top: 49%">« Créer un plan depuis l'odontogramme » — <b>le devis se remplit tout seul</b></div>
+      </div>
+    </div>
+    <div class="cards">
+      <div class="card vio rise">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></div>
+        <h3>Cinq documents en un clic</h3>
+        <p>Ordonnance, certificat, lettre de liaison, note d'honoraires — et l'arrêt de travail sur le vrai formulaire CNAM P 061.</p>
+      </div>
+      <div class="card rise d1">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v14H4z"/><path d="M8 10h8M8 14h5"/></svg></div>
+        <h3>Radios, DICOM, empreintes 3D</h3>
+        <p>Panoramiques, STL, consentements — classés par dossier, prévisualisés sans rien installer.</p>
+      </div>
+      <div class="card grn rise d2">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m21 8-9-5-9 5v8l9 5 9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg></div>
+        <h3>Le stock se déduit seul</h3>
+        <p>Chaque acte connaît ses matériaux : enregistrer la fiche sort les consommables et écrit le mouvement.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 13:00 — the worklist ═══════════════════════════════════════════ -->
+  <section class="hour wrap" id="h13">
+    <div class="tick"><span class="tick-dot"></span><span class="tick-time">13:00</span></div>
+    <div class="hour-body">
+      <p class="eyebrow rise">Entre deux patients</p>
+      <h2 class="display h2 rise d1">Le logiciel sait ce qui n'est pas fini.</h2>
+      <p class="lede rise d2">Une séance n'est clôturée que si trois questions ont une réponse : <b>est-il venu</b>, <b>qu'a-t-on fait</b>, <b>combien a-t-il payé</b>. La liste se construit toute seule à partir de ce qui manque, et ne pose qu'une question à la fois.</p>
+    </div>
+    <div class="shot-hold rise d2">
+      <div class="frame drift" data-drift="14">
+        <div class="frame-bar"><span class="dot3"><i></i><i></i><i></i></span><span class="u">À clôturer — 7 derniers jours</span><span class="hint">glissez →</span></div>
+        <div class="shot-scroll"><img src="img/app-cloturer.png" alt="La liste « À clôturer » : pour chaque séance passée, les trois étapes Venue, Fiche, Encaissement, et le seul bouton de l'étape suivante." width="1500" height="1000"></div>
+        <div class="call bl" style="left: 58%; top: 13%">Venue → Fiche → Encaissement : <b>seule l'étape suivante est proposée</b></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 18:00 — la caisse ══════════════════════════════════════════════ -->
+  <section class="hour wrap" id="h18">
+    <div class="tick"><span class="tick-dot"></span><span class="tick-time">18:00</span></div>
+    <div class="hour-body">
+      <p class="eyebrow rise">On ferme</p>
+      <h2 class="display h2 rise d1">La caisse dit où est l'argent. Chèques compris.</h2>
+      <p class="lede rise d2">Pas trois chiffres opaques : l'extrait détaille chaque mouvement, espèces et chèques postdatés séparés, avec le numéro du chèque, la banque et la date d'encaissement.</p>
+    </div>
+    <div class="shot-hold rise d2">
+      <div class="frame drift" data-drift="16">
+        <div class="frame-bar"><span class="dot3"><i></i><i></i><i></i></span><span class="u">Caisse — mardi 18 août 2026</span><span class="hint">glissez →</span></div>
+        <div class="shot-scroll"><img src="img/app-caisse.png" alt="La caisse du jour : encaissements, avoirs, dépenses et net, la répartition par mode de paiement, puis l'extrait de caisse mouvement par mouvement." width="1500" height="1000"></div>
+        <div class="call tl" style="left: 18%; top: 37%">Espèces, chèque, carte, virement — <b>séparés, jamais additionnés à l'aveugle</b></div>
+        <div class="call br" style="right: 6%; top: 77%">Le chèque porte son n°, sa banque et sa date d'encaissement</div>
+      </div>
+    </div>
+    <div class="cards">
+      <div class="card amb rise">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M2 10h20"/></svg></div>
+        <h3>Chèques postdatés</h3>
+        <p>Tous ceux que vous détenez, classés par échéance : en retard, bientôt, plus tard, sans date.</p>
+      </div>
+      <div class="card rise d1">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3v18h18"/><path d="m7 15 4-5 3 3 5-7"/></svg></div>
+        <h3>Créances &amp; relances</h3>
+        <p>Qui doit combien, depuis quand. Chaque chiffre ouvre les dossiers qu'il a comptés.</p>
+      </div>
+      <div class="card grn rise d2">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+        <h3>L'argent se corrige</h3>
+        <p>Un paiement mal saisi s'annule avec un motif et un auteur. Rien ne s'efface, tout se retrouve.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 20:00 — the numbers ════════════════════════════════════════════ -->
+  <section class="hour wrap" id="h20">
+    <div class="tick"><span class="tick-dot"></span><span class="tick-time">20:00</span></div>
+    <div class="hour-body">
+      <p class="eyebrow rise">Le calme</p>
+      <h2 class="display h2 rise d1">Et le mois se raconte tout seul.</h2>
+      <p class="lede rise d2">Taux d'absence, nouveaux patients, devis acceptés, net encaissé, répartition des actes, six mois de tendance. Comparé à la période précédente — et chaque chiffre est un lien vers les dossiers qu'il a comptés.</p>
+    </div>
+    <div class="shot-hold rise d2">
+      <div class="frame drift" data-drift="12">
+        <div class="frame-bar"><span class="dot3"><i></i><i></i><i></i></span><span class="u">Tableau de bord — l'activité et l'argent</span><span class="hint">glissez →</span></div>
+        <div class="shot-scroll"><img src="img/app-argent3.png" alt="Les sections Activité et Argent du tableau de bord : taux d'absence, nouveaux patients, net, encaissé, dépenses, la tendance sur six mois et la répartition des actes." width="1500" height="1000"></div>
+        <div class="call tr" style="right: 4%; top: 54%">La répartition des actes : <b>où part vraiment le temps au fauteuil</b></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ Coverage ═══════════════════════════════════════════════════════ -->
+  <section class="cover wrap" id="tout">
+    <div class="cover-head">
+      <p class="eyebrow rise">Rien à côté du logiciel</p>
+      <h2 class="display h2 rise d1">Tout ce qu'un cabinet fait dans une journée est déjà dedans.</h2>
+      <p class="rise d2">Pas de cahier à côté, pas de fichier Excel parallèle, pas de deuxième abonnement. Voici l'inventaire complet, rangé comme dans l'application.</p>
+    </div>
+
+    <div class="zones rise d2">
+      <div class="zgrp" style="--zc: var(--azure)">
+        <div class="zt"><span class="lbl">Quotidien</span><span class="ln"></span></div>
+        <div class="zitems">
+          <div class="zi"><svg class="mk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg><span><b>Agenda</b> <span>jour, semaine, mois, multi-praticiens</span></span></div>
+          <div class="zi"><svg class="mk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg><span><b>Salle d'attente</b> <span>qui est arrivé, qui attend</span></span></div>
+          <div class="zi"><svg class="mk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg><span><b>Fiche patient</b> <span>antécédents, allergies, assurance, gouvernorat</span></span></div>
+          <div class="zi"><svg class="mk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg><span><b>Doublons signalés</b> <span>avant la création, pas après</span></span></div>
+          <div class="zi"><svg class="mk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg><span><b>RDV récurrents</b> <span>une série posée en une fois</span></span></div>
+          <div class="zi"><svg class="mk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg><span><b>Import CSV</b> <span>arriver avec 3 000 patients, pas les retaper</span></span></div>
+        </div>
+      </div>
+
+      <div class="zgrp" style="--zc: var(--violet)">
+        <div class="zt"><span class="lbl">Clinique</span><span class="ln"></span></div>
+        <div class="zitems">
+          <div class="zi"><svg class="mk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg><span><b>Odontogramme</b> <span>adulte, enfant, mixte</span></span></div>
+          <div class="zi"><svg class="mk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg><span><b>Fiches de soins</b> <span>acte, dents, notes, praticien</span></span></div>
+          <div class="zi"><svg class="mk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg><span><b>Plans de traitement</b> <span>ordonnés, révisables, avec échéancier</span></span></div>
+          <div class="zi"><svg class="mk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg><span><b>Ordonnances</b> <span>catalogue de médicaments intégré</span></span></div>
+          <div class="zi"><svg class="mk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg><span><b>CNAM</b> <span>nomenclature, BS1, plafond annuel, P 061</span></span></div>
+          <div class="zi"><svg class="mk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg><span><b>Fichiers patients</b> <span>radios, DICOM, STL, consentements</span></span></div>
+        </div>
+      </div>
+
+      <div class="zgrp" style="--zc: var(--amber-ink)">
+        <div class="zt"><span class="lbl">Finances</span><span class="ln"></span></div>
+        <div class="zitems">
+          <div class="zi"><svg class="mk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg><span><b>Notes d'honoraires</b> <span>timbre, TVA, numérotation sans trou</span></span></div>
+          <div class="zi"><svg class="mk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg><span><b>Extrait de caisse</b> <span>chaque mouvement, pas juste un total</span></span></div>
+          <div class="zi"><svg class="mk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg><span><b>Chèques postdatés</b> <span>classés par échéance</span></span></div>
+          <div class="zi"><svg class="mk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg><span><b>Créances</b> <span>qui doit combien, depuis quand</span></span></div>
+          <div class="zi"><svg class="mk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg><span><b>Avoirs</b> <span>corriger sans effacer, avec motif et auteur</span></span></div>
+          <div class="zi"><svg class="mk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg><span><b>Dépenses</b> <span>loyer, labo, consommables</span></span></div>
+        </div>
+      </div>
+
+      <div class="zgrp" style="--zc: var(--green)">
+        <div class="zt"><span class="lbl">Gestion</span><span class="ln"></span></div>
+        <div class="zitems">
+          <div class="zi"><svg class="mk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg><span><b>Stock</b> <span>lots, péremptions, seuils, mouvements</span></span></div>
+          <div class="zi"><svg class="mk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg><span><b>Fournisseurs</b> <span>WhatsApp partout où leur nom apparaît</span></span></div>
+          <div class="zi"><svg class="mk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg><span><b>Bons de prothèse</b> <span>envoyé, en cours, reçu, posé</span></span></div>
+          <div class="zi"><svg class="mk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg><span><b>Rôles</b> <span>admin, praticien, secrétaire</span></span></div>
+          <div class="zi"><svg class="mk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg><span><b>Journal d'activité</b> <span>chaque modification a un auteur</span></span></div>
+          <div class="zi"><svg class="mk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg><span><b>Export Excel</b> <span>sur neuf listes, pour le comptable</span></span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ Reassurance ════════════════════════════════════════════════════ -->
+  <section class="band">
+    <div class="wrap band-in">
+      <div>
+        <p class="eyebrow rise">Et quand ça compte</p>
+        <h2 class="display rise d1">Ça marche même sans internet.</h2>
+        <p class="lede rise d2">Installé sur le poste du cabinet, le logiciel sert tout votre réseau depuis votre propre disque : la coupure ADSL n'arrête pas la journée. Ou hébergé, si vous préférez y accéder de chez vous.</p>
+      </div>
+      <div class="keeps">
+        <div class="keep rise" style="--zc: var(--green)">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg></span>
+          <span><b>Sur votre poste, ou en ligne</b><span>Vos données sur votre disque, ou hébergées. Le même logiciel.</span></span>
+          <span class="pill">hors ligne</span>
+        </div>
+        <div class="keep rise d1" style="--zc: var(--azure)">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v6h-6"/></svg></span>
+          <span><b>Sauvegarde toutes les heures</b><span>Et relue pour vérifier qu'elle est lisible. Sept points de restauration.</span></span>
+          <span class="pill">vérifiée</span>
+        </div>
+        <div class="keep rise d2" style="--zc: var(--violet)">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 19h2"/></svg></span>
+          <span><b>Android, iPhone, Windows</b><span>Le même cabinet dans la poche, avec notifications.</span></span>
+          <span class="pill">mobile</span>
+        </div>
+        <div class="keep rise d3" style="--zc: var(--amber-ink)">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3 3 7v6c0 5 9 8 9 8s9-3 9-8V7z"/><path d="m9 12 2 2 4-4"/></svg></span>
+          <span><b>Vos données restent les vôtres</b><span>Exports CSV, PDF, et l'archive complète du cabinet à tout moment.</span></span>
+          <span class="pill">réversible</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ Close ══════════════════════════════════════════════════════════ -->
+  <section class="close wrap" id="fin">
+    <h2 class="display rise">Demain matin, 08:00.</h2>
+    <p class="rise d1">Trente jours pour voir si votre cabinet respire mieux. Sans carte bancaire, et vos données repartent avec vous quand vous voulez.</p>
+    <div class="hero-cta rise d2">
+      <a class="btn btn-primary" href="#">Démarrer l'essai</a>
+      <a class="btn btn-ghost" href="#">Demander une démo</a>
+    </div>
+    <div class="spec">
+      <div><b>Hors ligne</b><span>Sur le poste du cabinet, sans aucune connexion.</span></div>
+      <div><b>320 px</b><span>Du téléphone au fauteuil au grand écran.</span></div>
+      <div><b>CNAM</b><span>Nomenclature, BS1, plafond annuel, arrêt de travail.</span></div>
+      <div><b>TND</b><span>Timbre, TVA et gouvernorats tunisiens d'origine.</span></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap foot-in">
+    <span>Gestion Clinique — cabinets dentaires et médicaux, Tunisie</span>
+    <span class="mono">contact@gestion-clinique.tn</span>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ── Scroll reveals ─────────────────────────────────────────────────── */
+  const io = new IntersectionObserver((es) => {
+    es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
+  }, { rootMargin: "0px 0px -10% 0px", threshold: 0.08 });
+  document.querySelectorAll(".rise").forEach(el => reduce ? el.classList.add("in") : io.observe(el));
+
+  /* Callouts inside a frame reveal with the frame */
+  document.querySelectorAll(".frame").forEach(fr => {
+    const calls = [...fr.querySelectorAll(".call")];
+    if (!calls.length) return;
+    if (reduce) { calls.forEach(c => c.classList.add("in")); return; }
+    const o = new IntersectionObserver((es) => {
+      es.forEach(e => {
+        if (!e.isIntersecting) return;
+        calls.forEach((c, i) => setTimeout(() => c.classList.add("in"), 380 + i * 260));
+        o.disconnect();
+      });
+    }, { threshold: 0.35 });
+    o.observe(fr);
+  });
+
+  /* ── Time-rail progress + live hour ─────────────────────────────────── */
+  const main = document.querySelector("main");
+  const hours = [...document.querySelectorAll(".hour, .hero")];
+  const drifts = [...document.querySelectorAll(".drift")];
+  let raf = 0;
+
+  const frame = () => {
+    raf = 0;
+    const r = main.getBoundingClientRect();
+    const p = Math.min(1, Math.max(0, (innerHeight * 0.5 - r.top) / r.height));
+    document.documentElement.style.setProperty("--progress", p.toFixed(4));
+
+    const mid = innerHeight * 0.42;
+    let live = null;
+    for (const h of hours) {
+      const b = h.getBoundingClientRect();
+      if (b.top <= mid && b.bottom > mid) live = h;
+    }
+    hours.forEach(h => h.classList.toggle("is-live", h === live));
+
+    /* parallax drift on the screenshots — small, and only while on screen */
+    if (!reduce) {
+      for (const el of drifts) {
+        const b = el.getBoundingClientRect();
+        if (b.bottom < -200 || b.top > innerHeight + 200) continue;
+        const amount = Number(el.dataset.drift || 12);
+        const t = (b.top + b.height / 2 - innerHeight / 2) / innerHeight; // −1 … 1
+        el.style.setProperty("--drift", (-t * amount).toFixed(1) + "px");
+      }
+    }
+  };
+  addEventListener("scroll", () => raf || (raf = requestAnimationFrame(frame)), { passive: true });
+  addEventListener("resize", frame);
+  frame();
+
+  /* ── The loop: nodes light in sequence, forever, while visible ───────── */
+  const chain = document.getElementById("chain");
+  if (chain && !reduce) {
+    const nodes = [...chain.querySelectorAll(".node")];
+    let i = 0, timer = null;
+    const step = () => {
+      nodes.forEach(n => n.classList.remove("lit"));
+      nodes[i].classList.add("lit");
+      i = (i + 1) % nodes.length;
+    };
+    const o = new IntersectionObserver((es) => {
+      es.forEach(e => {
+        if (e.isIntersecting && !timer) { step(); timer = setInterval(step, 1150); }
+        else if (!e.isIntersecting && timer) { clearInterval(timer); timer = null; nodes.forEach(n => n.classList.remove("lit")); }
+      });
+    }, { threshold: 0.25 });
+    o.observe(chain);
+  }
+})();
+</script>
+
+</body>
+</html>
