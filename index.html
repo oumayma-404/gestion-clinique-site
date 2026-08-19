@@ -24,6 +24,7 @@
    are the same object. Every oklch below is already gamut-verified in the app.
    ═══════════════════════════════════════════════════════════════════════════ */
 :root {
+  color-scheme: light;
   --ground:      oklch(0.977 0.011 230);
   --ground-deep: oklch(0.958 0.013 231);
   --paper:       oklch(1 0 0);
@@ -59,6 +60,7 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
+    color-scheme: dark;
     --ground:      oklch(0.245 0.006 268);
     --ground-deep: oklch(0.218 0.006 268);
     --paper:       oklch(0.305 0.006 265);
@@ -86,6 +88,7 @@
   }
 }
 :root[data-theme="dark"] {
+  color-scheme: dark;
   --ground:      oklch(0.245 0.006 268);
   --ground-deep: oklch(0.218 0.006 268);
   --paper:       oklch(0.305 0.006 265);
@@ -180,6 +183,42 @@ nav {
 .btn-ghost { border-color: var(--rule); color: var(--ink); background: var(--paper); }
 .btn-ghost:hover { border-color: var(--azure); }
 @media (hover: hover) and (pointer: fine) { .btn:hover { transform: translateY(-1px); } }
+
+/* ── Theme control ───────────────────────────────────────────────────────── */
+/* A radio group of three, matching the app's own: « Système » is a real choice and the
+   default, not the absence of the other two — so a visitor whose phone is dark keeps
+   getting dark without touching anything. */
+.theme {
+  display: flex; align-items: center; gap: 2px; flex: none;
+  padding: 3px; border-radius: 999px;
+  background: color-mix(in oklab, var(--ink) 5%, transparent);
+  border: 1px solid var(--rule);
+}
+.theme button {
+  display: grid; place-items: center;
+  width: 2rem; height: 2rem; padding: 0;
+  border: 0; border-radius: 999px; background: none; cursor: pointer;
+  color: var(--ink-muted);
+  transition: background-color 180ms, color 180ms, box-shadow 180ms;
+}
+.theme button svg { width: 1rem; height: 1rem; }
+.theme button:hover { color: var(--ink); }
+.theme button[aria-checked="true"] {
+  background: var(--paper); color: var(--azure);
+  box-shadow: 0 1px 2px oklch(0.42 0.05 235 / 0.12);
+}
+:root[data-theme="dark"] .theme button[aria-checked="true"],
+:root:not([data-theme="light"]) .theme button[aria-checked="true"] {
+  box-shadow: 0 1px 2px oklch(0 0 0 / 0.4);
+}
+/* The 44px floor applies to a finger, and a three-segment pill at 44px is ~144px wide — which
+   at 320px only fits once the bar's own gap tightens. Both, rather than a 38px compromise. */
+@media (pointer: coarse) { .theme button { width: 2.75rem; height: 2.75rem; } }
+@media (max-width: 26rem) { .nav-in { gap: 0.5rem; } }
+
+/* At 320px the bar cannot hold logo + wordmark + control + CTA. The wordmark is the piece
+   whose absence costs least — the mark still identifies the page. */
+@media (max-width: 26rem) { .brand-text { display: none; } }
 
 /* ── Time rail ──────────────────────────────────────────────────────────── */
 main { position: relative; }
@@ -452,13 +491,28 @@ footer { padding: 2.5rem 0 3.5rem; border-top: 1px solid var(--rule-soft); font-
 }
 </style>
 
+<script>
+/*
+ * Applied before first paint, deliberately inline and blocking: reading the choice after the
+ * body renders means a dark-mode visitor gets a white flash on every page load.
+ * `system` writes NO attribute, which is what lets the `prefers-color-scheme` media query
+ * in the stylesheet stay in charge.
+ */
+(() => {
+  try {
+    const t = localStorage.getItem("gc-theme");
+    if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+  } catch (e) { /* private mode: fall through to the system preference */ }
+})();
+</script>
+
 </head>
 <body>
 <nav>
   <div class="wrap nav-in">
     <a class="brand" href="#">
       <svg viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="118" fill="var(--azure)"/><path d="M256 128C196 128 152 162 152 214C152 252 160 286 168 322C174 350 180 380 190 392C200 404 214 400 218 382C226 344 234 316 244 300C248 292 264 292 268 300C278 316 286 344 294 382C298 400 312 404 322 392C332 380 338 350 344 322C352 286 360 252 360 214C360 162 316 128 256 128Z" fill="oklch(0.99 0.005 234)"/></svg>
-      Gestion Clinique
+      <span class="brand-text">Gestion Clinique</span>
     </a>
     <div class="nav-sp"></div>
     <div class="nav-links">
@@ -467,6 +521,11 @@ footer { padding: 2.5rem 0 3.5rem; border-top: 1px solid var(--rule-soft); font-
       <a href="#h10">Le fauteuil</a>
       <a href="#h18">La caisse</a>
       <a href="#tout">Tout le reste</a>
+    </div>
+    <div class="theme" role="radiogroup" aria-label="Thème">
+      <button type="button" role="radio" data-theme-choice="system" aria-checked="true" title="Système" aria-label="Système"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></button>
+      <button type="button" role="radio" data-theme-choice="light" aria-checked="false" title="Clair" aria-label="Clair"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+      <button type="button" role="radio" data-theme-choice="dark" aria-checked="false" title="Sombre" aria-label="Sombre"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg></button>
     </div>
     <a class="btn btn-primary nav-cta" href="#fin"><span class="cta-long">Essayer 30 jours</span><span class="cta-short">Essai</span></a>
   </div>
@@ -833,6 +892,33 @@ footer { padding: 2.5rem 0 3.5rem; border-top: 1px solid var(--rule-soft); font-
 <script>
 (() => {
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ── Theme control ────────────────────────────────────────────────────── */
+  const themeBtns = [...document.querySelectorAll("[data-theme-choice]")];
+  if (themeBtns.length) {
+    const read = () => { try { return localStorage.getItem("gc-theme") || "system"; } catch (e) { return "system"; } };
+    const paint = (choice) => {
+      /* `system` removes the attribute entirely — that is what hands control back to the
+         `prefers-color-scheme` media query rather than freezing today's resolved value. */
+      if (choice === "system") document.documentElement.removeAttribute("data-theme");
+      else document.documentElement.setAttribute("data-theme", choice);
+      themeBtns.forEach(b => b.setAttribute("aria-checked", String(b.dataset.themeChoice === choice)));
+    };
+    paint(read());
+    themeBtns.forEach(b => b.addEventListener("click", () => {
+      const choice = b.dataset.themeChoice;
+      try { choice === "system" ? localStorage.removeItem("gc-theme") : localStorage.setItem("gc-theme", choice); } catch (e) {}
+      paint(choice);
+    }));
+    /* Arrow keys move between radios, as a radiogroup is expected to. */
+    themeBtns.forEach((b, i) => b.addEventListener("keydown", (e) => {
+      const d = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+      if (!d) return;
+      e.preventDefault();
+      const next = themeBtns[(i + d + themeBtns.length) % themeBtns.length];
+      next.focus(); next.click();
+    }));
+  }
 
   /* ── Scroll reveals ─────────────────────────────────────────────────── */
   const io = new IntersectionObserver((es) => {
