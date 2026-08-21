@@ -20,68 +20,9 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,300..700&family=Geist:wght@300..800&family=Geist+Mono:wght@400;500&display=swap">
 
 <style>
-/* ═══════════════════════════════════════════════════════════════════════════════
-   v7 — THE ATTENTION PASS.
 
-   v5's visual system is kept verbatim — the tokens, the two faces, the four zone hues,
-   the drifting ground, the reveal. v6 fixed WHERE things were. v7 fixes what earns the
-   first ten seconds, and it removes a feature that may not ship.
-
-   ── Carried over from v6, unchanged and still the load-bearing decisions ────────────
-
-   A. THE APP IS ON SCREEN IMMEDIATELY, AT EVERY WIDTH. The hero is a two-column grid at
-      ≥ 62 rem (words left, screen right) whose DOM order is already the phone order:
-      eyebrow → titre → ÉCRAN → phrase → boutons. Nothing is re-ordered by CSS, so the
-      reading order and the visual order agree in both layouts. On a phone the frame goes
-      edge to edge (`margin-inline: -1.5rem`, exactly cancelling `.wrap`'s padding).
-
-   B. THE DESKTOP CAPTURE IS WHAT EVERY VISITOR SEES, PHONE INCLUDED. A dentist on a phone
-      is evaluating the software they will run on the surgery PC. The portrait phone set
-      appears in one section only — « Dans la poche » — where a phone IS the subject.
-
-   C. LEGIBILITY IS THE VIEWER'S JOB, NOT THE FRAME'S. Every capture is a real <button>.
-      « Ajuster » fits the whole window; « Lire » gives the image the stage's full HEIGHT
-      and pans sideways — on a 390 × 844 phone that is a 1 440 px app window at ~0.82×,
-      i.e. genuinely readable, because the phone's LONG edge is spent on the app's width.
-      Phones open in « Lire », desks in « Ajuster ».
-
-   ── What v7 changes ────────────────────────────────────────────────────────────────
-
-   1. THE FIRST SCREENSHOTS SELL, THEY DO NOT DEMONSTRATE. v6's hero cycled the dashboard
-      on a calm day, a busy day and a finished day. The claim is true and the motion is
-      nice, but it spends the most valuable seconds on the page proving something subtle
-      to a visitor who does not yet know what the product IS. v7 cycles four DIFFERENT
-      screens — tableau de bord, agenda, dossier, caisse — and names all four in the tab
-      row, so four selling points are on screen at once and each is shown big in turn.
-
-   2. NOBODY READS AN INVENTORY. v6 gave each of the twenty-four screens a name AND a
-      gloss: forty-eight fragments, ~2 600 px of phone scroll, and a reader who scans for
-      one recognisable word and leaves if scanning is work. The glosses are gone. Twenty-
-      four nouns, four hue-coded rows, ~380 px. It answers « est-ce que ça fait ce dont
-      j'ai besoin » in five seconds with no sentences, which is why it can stay at
-      position 2 instead of being pushed down.
-
-   3. CNAM IS OFF THE PAGE. The feature may not ship, so the site does not sell it: the
-      « Écrit pour la Tunisie » section is deleted, along with the BS1 and P 061 lines,
-      the headline's fourth noun and the nav entry. What was true about Tunisia and is
-      NOT CNAM — numérotation sans trou, chèques postdatés, dinars —
-      moves into « L'argent » as four chips, where it costs no section of its own.
-      ⚠️ « Nomenclature CNAM » is still legible in the app's own left rail inside several
-      captures. Re-shoot with that menu item hidden before this goes live.
-
-   4. SEVEN SECTIONS, DOWN FROM EIGHT, AND EVERY ONE OF THEM SHORTER.
-
-   The copy rule from v6 stands: a heading states a FACT, never an image. And the French
-   avoids the em-dash apposition that made v5 read translated — French runs on commas,
-   colons and relative clauses, with the non-breaking spaces before « : ? ! % ».
-   ═══════════════════════════════════════════════════════════════════════════════ */
 :root {
-  /* ONE palette, deliberately — v5 committed to dark and this pass does not reopen it.
-     Because there is no light block and no theme stamp to honour, every colour has to be
-     stated HERE on bare `:root`: the viewer has three theme states (dark, light, and the
-     un-stamped system default), and a token defined only inside a media query or a
-     [data-theme] block never applies in the un-stamped one. `body` paints its background
-     from a token for the same reason — a transparent body borrows the host's ground. */
+  
   color-scheme: dark;
   --ground:      oklch(0.238 0.008 264);
   --paper:       oklch(0.300 0.006 265);
@@ -92,11 +33,11 @@
   --rule:        oklch(0.365 0.008 268);
   --rule-soft:   oklch(0.320 0.007 266);
 
-  /* The app's own four zones, at the same lightness so none of them shouts. */
-  --azure:  oklch(0.74 0.125 234);   /* Quotidien */
-  --violet: oklch(0.76 0.11  308);   /* Clinique  */
-  --amber:  oklch(0.80 0.125 78);    /* Finances  */
-  --green:  oklch(0.74 0.13  155);   /* Gestion   */
+  
+  --azure:  oklch(0.74 0.125 234);   
+  --violet: oklch(0.76 0.11  308);   
+  --amber:  oklch(0.80 0.125 78);    
+  --green:  oklch(0.74 0.13  155);   
 
   --r: 0.75rem;
   --ease: cubic-bezier(.22,.61,.36,1);
@@ -134,8 +75,7 @@ button { font: inherit; color: inherit; }
 
 section { position: relative; }
 .wrap { max-width: 70rem; margin: 0 auto; padding-inline: 1.5rem; }
-/* ⚠️ Bands clip horizontally, never `hidden`: `hidden` would turn each section into its
-   own scroll container, and the blurred halo behind a frame reaches past the gutter. */
+
 .sec { padding-block: 5.5rem; overflow-x: clip; }
 @media (max-width: 47rem) { .sec { padding-block: 4rem; } }
 @media (max-width: 24rem) { .wrap { padding-inline: 1.125rem; }
@@ -145,11 +85,7 @@ section { position: relative; }
 .head .eyebrow + h2 { margin-top: 0.6875rem; }
 .head .lede { margin-top: 1rem; }
 
-/* ── The drifting ground ──────────────────────────────────────────────────────
-   ⚠️ `vmax`, not `vw`. At 46vw a blob is 662 px on a 1 440 px desktop and 179 px on a
-   390 px phone, so offset and blurred it simply did not exist on the device most
-   visitors arrive on. `vmax` reads the LONGER edge, so a portrait phone sizes its blobs
-   off its 844 px height. In landscape vmax IS vw, so desktop is unchanged. */
+
 .field { position: fixed; inset: 0; z-index: -2; overflow: hidden; pointer-events: none; }
 .blob { position: absolute; border-radius: 50%; filter: blur(70px); will-change: transform; }
 .b1 { width: 46vmax; height: 46vmax; left: -8vmax; top: -12vmax;
@@ -165,12 +101,7 @@ section { position: relative; }
 @keyframes d2 { to { transform: translate(-12%, 14%) scale(1.08); } }
 @keyframes d3 { to { transform: translate(10%, -12%) scale(1.14); } }
 
-/* ── Nav ──────────────────────────────────────────────────────────────────────
-   v5 carried a fixed rail down the left gutter. It is replaced by a hairline under the
-   nav: the rail was pinned to `max(1.5rem, 50vw - 35rem)`, the left edge of a 70 rem
-   container, so ANY section wider than 70 rem ran its own content over it — and the hero
-   here is deliberately 80 rem. A progress line under the nav has no such coupling and
-   still works at 320 px. */
+
 nav {
   position: sticky; top: 0; z-index: 40;
   background: color-mix(in oklab, var(--ground) 82%, transparent);
@@ -210,21 +141,13 @@ nav {
 }
 nav .btn { min-height: 2.25rem; font-size: 0.875rem; padding: 0 0.9375rem; white-space: nowrap; }
 
-/* ── Reveal ───────────────────────────────────────────────────────────────────
-   IntersectionObserver, not :hover and not a min-width — both of v5's earlier motions
-   were invisible on the device most of this page's traffic uses. */
+
 .rise { opacity: 0; transform: translateY(14px); transition: opacity 700ms var(--ease), transform 700ms var(--ease); }
 .rise.in { opacity: 1; transform: none; }
 .d1 { transition-delay: 80ms; } .d2 { transition-delay: 160ms; }
 .d3 { transition-delay: 240ms; } .d4 { transition-delay: 320ms; }
 
-/* ══ THE LAPTOP SHELL ══════════════════════════════════════════════════════════
-   A 2 880 × 1 800 capture in a 342 px phone frame is the app at 0.24×. Nothing recovers
-   its text at that size, and pretending otherwise is what produced v5's 740 px-tall
-   portrait frames. What the inline frame has to do instead is say, unmistakably and in
-   244 px, « this is a desktop application » — hence a real lid: a bezel, a three-dot
-   strip and a hinge foot. Those three read at any size, where the pixels inside do not.
-   Reading is the viewer's job (see `.lbx`). */
+
 .shot {
   display: block; width: 100%; padding: 0; border: 0; background: none;
   text-align: left; cursor: zoom-in; position: relative;
@@ -237,14 +160,14 @@ nav .btn { min-height: 2.25rem; font-size: 0.875rem; padding: 0 0.9375rem; white
   box-shadow: var(--shadow-frame);
   transition: transform 320ms var(--ease), border-color 320ms var(--ease);
 }
-/* Three dots, drawn once with a repeating gradient rather than three elements. */
+
 .lid::before {
   content: ""; position: absolute; top: 0.4375rem; left: 0.6875rem;
   width: 2.0625rem; height: 0.375rem;
   background-image: radial-gradient(circle, var(--rule) 42%, transparent 46%);
   background-size: 0.6875rem 0.375rem;
 }
-/* The hinge. It sits OUTSIDE the lid, so anything wrapping a `.shot` leaves room. */
+
 .lid::after {
   content: ""; position: absolute; left: 50%; translate: -50% 0; bottom: -0.4375rem;
   width: 24%; height: 0.4375rem; border-radius: 0 0 0.3125rem 0.3125rem;
@@ -256,20 +179,14 @@ nav .btn { min-height: 2.25rem; font-size: 0.875rem; padding: 0 0.9375rem; white
   display: block; position: relative; overflow: hidden; border-radius: 0.375rem;
   aspect-ratio: 16 / 9; background: var(--paper-2);
 }
-/* ⚠️ The frame's ratio IS the capture's ratio (3 072 × 1 728 = 16/9) at every width, so
-   `cover` never actually crops. That equality is the invariant: the moment a frame's
-   ratio differs from its capture's, `overflow: hidden` cuts the bottom off the image and
-   nothing errors. v5 shipped for a while with a 1.6 frame serving a 0.462 phone capture,
-   and « Les chiffres » rendered a search bar and a greeting. */
+
 .scr img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top left; }
 .glow {
   position: absolute; inset: -9% -5%; z-index: -1; border-radius: 50%;
   background: radial-gradient(closest-side, color-mix(in oklab, var(--hue, var(--azure)) 34%, transparent), transparent 70%);
   filter: blur(40px); transition: background 900ms var(--ease);
 }
-/* The affordance is permanent, not hover-revealed: on a coarse pointer there is no
-   hover, and « you can open this » is the single most important thing this page has to
-   tell a phone visitor. */
+
 .zoom {
   position: absolute; right: 0.625rem; bottom: 0.625rem; z-index: 2;
   display: inline-flex; align-items: center; gap: 0.375rem;
@@ -285,8 +202,7 @@ nav .btn { min-height: 2.25rem; font-size: 0.875rem; padding: 0 0.9375rem; white
   .shot:hover .lid { transform: translateY(-2px); border-color: var(--ink-faint); }
   .shot:hover .zoom { background: var(--azure); color: oklch(0.20 0.03 250); border-color: transparent; }
 }
-/* A slot whose capture does not exist yet. Same lid, same ratio, so dropping the real
-   image in later changes no layout. */
+
 .scr[data-todo] {
   display: grid; place-items: center; padding: 1rem;
   background:
@@ -303,13 +219,7 @@ nav .btn { min-height: 2.25rem; font-size: 0.875rem; padding: 0 0.9375rem; white
 .shot:not([data-cap]) .zoom { display: none; }
 .shot:not([data-cap]) { cursor: default; }
 
-/* ══ HERO ══════════════════════════════════════════════════════════════════════
-   80 rem, wider than the 70 rem the rest of the page runs at, and the only section that
-   is. The frame column is 1.22fr against 1fr: at 1 440 px that is a 665 px screen, which
-   is the largest the app can be without the words beside it becoming a narrow gutter.
-   ⚠️ DOM order is the phone order. There is no `order:` anywhere in this grid — the
-   two-column layout places items explicitly, and the single-column one just lets them
-   fall, so tab order and reading order never diverge from what is on screen. */
+
 .hero { padding-block: 3.25rem 4.5rem; overflow-x: clip; }
 .hero .wrap { max-width: 80rem; }
 .hero-in { display: grid; gap: 1.25rem; }
@@ -357,11 +267,7 @@ nav .btn { min-height: 2.25rem; font-size: 0.875rem; padding: 0 0.9375rem; white
   .hero-shot .shot { margin-inline: -1.5rem; width: calc(100% + 3rem); }
   .hero-shot .lid { border-radius: 0; border-left: 0; border-right: 0; padding-inline: 0; }
   .hero-shot .scr { border-radius: 0; }
-  /* The state captions and the lede are both grey body text, and on a phone they
-     land one after the other — two paragraphs saying different things in the same
-     voice, right where the visitor is deciding whether to keep scrolling. The three
-     tab labels already carry the claim (calme / chargée / terminée), so the prose
-     goes and the lede gets the position. */
+  
   .st-cap { display: none; }
   .st-tabs { margin-top: 0.875rem; }
   .st-tabs button { font-size: 0.75rem; padding: 0 0.5625rem; min-height: 2rem; }
@@ -381,17 +287,9 @@ nav .btn { min-height: 2.25rem; font-size: 0.875rem; padding: 0 0.9375rem; white
   .hero-in > .facts     { grid-column: 1; grid-row: 5; margin-top: 0.375rem; }
 }
 
-/* The three states: one screen, three days. A crossfade, because the SCREEN is not
-   changing — only the data in it is. (The loop below travels, because there you do move
-   from screen to screen. The motion is telling you which kind of change it is.) */
 
-/* ══ 3 · L'INVENTAIRE ══════════════════════════════════════════════════════════
-   v6 gave each of the twenty-four screens a name AND a gloss — forty-eight fragments and
-   ~2 600 px of scroll on a phone. Nobody reads a wall like that. They scan it for a word
-   they recognise, and if scanning is work they leave. So the glosses are gone: what is
-   left is twenty-four nouns in four hue-coded rows, a five-second answer to « est-ce que
-   ça fait ce dont j'ai besoin » that asks for no reading at all. The section costs ~380 px
-   instead of 2 600, and it can stay high on the page instead of being pushed down. */
+
+
 .rows { display: grid; gap: 0.75rem; margin-top: 2.25rem; }
 .row {
   display: grid; grid-template-columns: 8rem minmax(0, 1fr); align-items: center;
@@ -416,11 +314,11 @@ nav .btn { min-height: 2.25rem; font-size: 0.875rem; padding: 0 0.9375rem; white
   .row li { font-size: 0.8125rem; padding: 0.3125rem 0.5625rem; }
 }
 
-/* ══ 2 · LE PRINCIPE ═══════════════════════════════════════════════════════════ */
+
 .chain {
   display: flex; align-items: center; gap: 0.3125rem; margin-top: 2.25rem;
   overflow-x: auto; padding-bottom: 0.5rem; scrollbar-width: thin;
-  /* Its own scroll container, so a six-step chain never makes the document scroll. */
+  
 }
 .chain button {
   flex: none; min-height: 2.5rem; padding: 0 0.875rem; border-radius: 999px; cursor: pointer;
@@ -454,7 +352,7 @@ nav .btn { min-height: 2.25rem; font-size: 0.875rem; padding: 0 0.9375rem; white
 .loop-caps h3 .n { font-family: "Geist Mono", ui-monospace, monospace; font-size: 0.75rem; color: var(--hue); }
 .loop-caps p { margin-top: 0.375rem; font-size: 0.875rem; color: var(--ink-muted); }
 
-/* ══ 4 · L'ARGENT ══════════════════════════════════════════════════════════════ */
+
 .fig-grid { display: grid; gap: 2rem; margin-top: 2.5rem; }
 @media (min-width: 62rem) { .fig-grid { grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); column-gap: 3rem; align-items: center; } }
 .kpis { display: grid; gap: 1rem; }
@@ -473,7 +371,7 @@ nav .btn { min-height: 2.25rem; font-size: 0.875rem; padding: 0 0.9375rem; white
 .shot-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin-top: 1.5rem; }
 .shot-cap { margin-top: 0.75rem; font-size: 0.8125rem; color: var(--ink-faint); }
 
-/* ══ 5 · SÉCURITÉ ══════════════════════════════════════════════════════════════ */
+
 .quad { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin-top: 2.5rem; }
 @media (max-width: 47rem) { .quad { grid-template-columns: minmax(0, 1fr); } }
 .tile { padding: 1.5rem; border-radius: var(--r); border: 1px solid var(--rule-soft);
@@ -484,10 +382,7 @@ nav .btn { min-height: 2.25rem; font-size: 0.875rem; padding: 0 0.9375rem; white
 .tile h3 { font-size: 1.0625rem; letter-spacing: -0.012em; }
 .tile p { margin-top: 0.5rem; font-size: 0.9375rem; color: var(--ink-muted); }
 
-/* ══ 6 · MOBILE ════════════════════════════════════════════════════════════════
-   The ONLY section that shows a phone capture, because here a phone is the subject.
-   Everywhere else the visitor is being shown the software they will run on the surgery
-   PC, and a portrait phone screen answers a question they did not ask. */
+
 .droid-grid { display: grid; gap: 2.5rem; margin-top: 2.5rem; }
 @media (min-width: 62rem) { .droid-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); column-gap: 3rem; align-items: center; } }
 .phones { display: flex; justify-content: center; gap: 0.875rem; }
@@ -501,7 +396,7 @@ nav .btn { min-height: 2.25rem; font-size: 0.875rem; padding: 0 0.9375rem; white
   font-size: 0.75rem; color: var(--ink-faint); }
 .droid p + p { margin-top: 0.875rem; }
 
-/* ══ 7 · CLOSE ═════════════════════════════════════════════════════════════════ */
+
 .close { text-align: center; padding-block: 5.5rem 7rem; }
 .close h2 { font-size: clamp(2rem, 4.6vw, 3rem); }
 .close .lede { margin: 1.125rem auto 0; }
@@ -512,19 +407,7 @@ nav .btn { min-height: 2.25rem; font-size: 0.875rem; padding: 0 0.9375rem; white
 footer { border-top: 1px solid var(--rule-soft); padding-block: 2rem; font-size: 0.8125rem; color: var(--ink-faint); }
 .foot-in { display: flex; flex-wrap: wrap; gap: 0.75rem 1.5rem; justify-content: space-between; }
 
-/* ══ THE VIEWER ════════════════════════════════════════════════════════════════
-   The answer to « how does a dentist read a 1 440 px desktop screenshot on a 390 px
-   phone ». Two modes:
 
-   · « Ajuster » fits the whole window — the right default at a desk, where it lands
-     around 1 200 px and is comfortably readable.
-   · « Lire » gives the image the stage's full HEIGHT and lets it overflow sideways. On a
-     390 × 844 phone the stage is ~780 px tall, so a 1.6 image is ~1 250 px wide: the app
-     at ~0.87× native, i.e. genuinely readable, because the phone's LONG edge is being
-     spent on the app's width instead of its height.
-
-   Phones therefore open in « Lire », desks in « Ajuster ». Pinch still works on top of
-   both — `touch-action` leaves it to the browser rather than fighting it with JS. */
 .lbx {
   position: fixed; inset: 0; z-index: 100; display: grid; grid-template-rows: auto minmax(0, 1fr);
   background: oklch(0.155 0.008 264 / 0.965); backdrop-filter: blur(12px);
@@ -559,10 +442,7 @@ footer { border-top: 1px solid var(--rule-soft); padding-block: 2rem; font-size:
 }
 .lbx-stage img { border-radius: 0.375rem; box-shadow: var(--shadow-frame); flex: none; }
 .lbx.fit  .lbx-stage img { max-width: 100%; max-height: 100%; width: auto; height: auto; }
-/* ⚠️ `justify-content: center` on a flex container whose child overflows makes the
-   left-hand overflow unreachable in every engine. In « Lire » the image is wider than
-   the stage by design, so the axis has to start at flex-start — which also puts the
-   app's own sidebar under your thumb, the right place to begin reading. */
+
 .lbx.read .lbx-stage { justify-content: flex-start; }
 .lbx.read .lbx-stage img { height: 100%; width: auto; max-width: none; }
 .lbx-hint { opacity: 1; transition: opacity 600ms var(--ease); position: absolute; left: 50%; bottom: 1rem; translate: -50% 0;
@@ -604,8 +484,7 @@ footer { border-top: 1px solid var(--rule-soft); padding-block: 2rem; font-size:
 </nav>
 
 <main>
-
-<!-- ══ 1 · HERO ══════════════════════════ -->
+
 <section class="hero">
   <div class="wrap">
     <div class="hero-in">
@@ -613,15 +492,7 @@ footer { border-top: 1px solid var(--rule-soft); padding-block: 2rem; font-size:
 
       <h1 class="display rise d1">Agenda, dossiers, caisse. <em>Un seul logiciel.</em></h1>
 
-      <!-- ⚠️ Third in the DOM on purpose: on a phone the app is on screen before the
-           visitor has read a second sentence. At ≥ 62 rem the grid lifts it into the
-           right-hand column without touching source order.
-
-           The four slides are four DIFFERENT screens, not four states of one. v6 showed
-           the dashboard calm, busy and finished — a true claim, but it spends the most
-           valuable seconds on the page proving something subtle to a visitor who does
-           not yet know what the product IS. Four distinct screens, NAMED in the tab row,
-           put four selling points on screen at once and show each one big in turn. -->
+      
       <div class="hero-shot rise d2">
         <div class="glow" aria-hidden="true" style="--hue: var(--azure)"></div>
         <div class="states" id="states">
@@ -705,8 +576,7 @@ footer { border-top: 1px solid var(--rule-soft); padding-block: 2rem; font-size:
     </div>
   </div>
 </section>
-
-<!-- ══ 2 · LE PRINCIPE ════════════════════════════════════════════════════════ -->
+
 <section class="sec" id="principe">
   <div class="wrap">
     <div class="head rise">
@@ -715,8 +585,7 @@ footer { border-top: 1px solid var(--rule-soft); padding-block: 2rem; font-size:
       <p class="lede">Un acte noté au fauteuil devient la note d'honoraires, la ligne de caisse, le chiffre du tableau de bord et le rappel du contrôle. Ces chiffres ne sont pas recopiés&nbsp;: ils sont calculés à partir de la même écriture, donc ils ne peuvent pas se contredire.</p>
     </div>
 
-    <!-- The chain is not decoration and it is not numbered for style: these six steps
-         happen in this order in a real day, and the last one returns to the first. -->
+    
     <div class="chain rise d1" role="tablist" aria-label="Les huit étapes de la boucle" id="chain">
       <button type="button" role="tab" data-i="0" aria-selected="true" style="--hue: var(--azure)">Rendez-vous</button>
       <svg class="arw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14m-5-5 5 5-5 5"/></svg>
@@ -792,8 +661,7 @@ footer { border-top: 1px solid var(--rule-soft); padding-block: 2rem; font-size:
     </div>
   </div>
 </section>
-
-<!-- ══ 3 · L'INVENTAIRE ════════════════════════ -->
+
 <section class="sec" id="couvre">
   <div class="wrap">
     <div class="head rise">
@@ -821,8 +689,7 @@ footer { border-top: 1px solid var(--rule-soft); padding-block: 2rem; font-size:
     </div>
   </div>
 </section>
-
-<!-- ══ 4 · L'ARGENT ═══════════════════════════════════════════════════════════ -->
+
 <section class="sec" id="argent">
   <div class="wrap">
     <div class="head rise">
@@ -892,8 +759,7 @@ footer { border-top: 1px solid var(--rule-soft); padding-block: 2rem; font-size:
     </div>
   </div>
 </section>
-
-<!-- ══ 5 · SÉCURITÉ ═══════════════════════════════════════════════════════════ -->
+
 <section class="sec" id="sur">
   <div class="wrap">
     <div class="head rise">
@@ -926,8 +792,7 @@ footer { border-top: 1px solid var(--rule-soft); padding-block: 2rem; font-size:
     </div>
   </div>
 </section>
-
-<!-- ══ 6 · MOBILE ═════════════════════════════════════════════════════════════ -->
+
 <section class="sec droid" id="mobile">
   <div class="wrap">
     <div class="head rise">
@@ -964,8 +829,7 @@ footer { border-top: 1px solid var(--rule-soft); padding-block: 2rem; font-size:
     </div>
   </div>
 </section>
-
-<!-- ══ 7 · CLOSE ══════════════════════════════════════════════════════════════ -->
+
 <section class="close" id="fin">
   <div class="wrap">
     <h2 class="display rise">Trente jours, sans carte bancaire.</h2>
@@ -990,8 +854,7 @@ footer { border-top: 1px solid var(--rule-soft); padding-block: 2rem; font-size:
     <a class="mono" href="mailto:contact@gestion-clinique.tn" style="text-decoration: none">contact@gestion-clinique.tn</a>
   </div>
 </footer>
-
-<!-- ══ THE VIEWER ═════════════════════════════════════════════════════════════ -->
+
 <div class="lbx fit" id="lbx" hidden role="dialog" aria-modal="true" aria-label="Capture d'écran en grand">
   <div class="lbx-bar">
     <p class="lbx-cap" id="lbx-cap"></p>
@@ -1016,7 +879,7 @@ footer { border-top: 1px solid var(--rule-soft); padding-block: 2rem; font-size:
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 
-  /* ── Reveal ─────────────────────────────────────────────────────────────── */
+  
   const rises = $$(".rise");
   if (reduce) rises.forEach(r => r.classList.add("in"));
   else {
@@ -1026,7 +889,7 @@ footer { border-top: 1px solid var(--rule-soft); padding-block: 2rem; font-size:
     rises.forEach(r => ro.observe(r));
   }
 
-  /* ── Scroll progress ────────────────────────────────────────────────────── */
+  
   const bar = $("#progress");
   const onScroll = () => {
     const max = document.documentElement.scrollHeight - innerHeight;
@@ -1036,10 +899,7 @@ footer { border-top: 1px solid var(--rule-soft); padding-block: 2rem; font-size:
   addEventListener("resize", onScroll);
   onScroll();
 
-  /* ── A slider's shared plumbing ───────────────────────────────────────────
-     The two sliders differ only in what `render` does. The selection, the pause after a
-     visitor's own tap, the swipe, the keyboard and the on-screen-only timer are the same
-     problem twice; writing them once is also what keeps them consistent. */
+  
   const makeSlider = ({ count, render, tabs, autoMs, stage, hold = 14000 }) => {
     let active = 0, until = 0, timer = null;
     const go = (i, byUser) => {
@@ -1054,7 +914,7 @@ footer { border-top: 1px solid var(--rule-soft); padding-block: 2rem; font-size:
       if (e.key === "ArrowLeft")  { e.preventDefault(); go(active - 1, true); tabs[active].focus(); }
     }));
 
-    /* Swipe. Horizontal intent only — a vertical drag has to keep scrolling the page. */
+    
     if (stage) {
       let x0 = null, y0 = null;
       stage.addEventListener("touchstart", e => { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; }, { passive: true });
@@ -1078,7 +938,7 @@ footer { border-top: 1px solid var(--rule-soft); padding-block: 2rem; font-size:
     return { go };
   };
 
-  /* ── Hero: one screen, three days ───────────────────────────────────────── */
+  
   const stShots = $$("#states .shot");
   const stCaps = $$(".st-cap p");
   makeSlider({
@@ -1092,7 +952,7 @@ footer { border-top: 1px solid var(--rule-soft); padding-block: 2rem; font-size:
     },
   });
 
-  /* ── The loop: six screens, travelling ──────────────────────────────────── */
+  
   const track = $("#loop-track");
   const loopCaps = $$("#loop-caps > div");
   const loopShot = $("#loop-shot");
@@ -1108,7 +968,7 @@ footer { border-top: 1px solid var(--rule-soft); padding-block: 2rem; font-size:
       track.style.setProperty("--i", i);
       loopCaps.forEach((c, k) => c.classList.toggle("on", k === i));
       loopGlow.style.setProperty("--hue", `var(${HUES[i]})`);
-      /* The frame is one button, so the viewer has to be told which slide is under it. */
+      
       const img = track.children[i].querySelector("img");
       if (img) { loopShot.dataset.src = img.src; loopShot.dataset.cap = img.alt; }
       else { delete loopShot.dataset.src; delete loopShot.dataset.cap; }
@@ -1117,7 +977,7 @@ footer { border-top: 1px solid var(--rule-soft); padding-block: 2rem; font-size:
     },
   });
 
-  /* ── KPI counters ───────────────────────────────────────────────────────── */
+  
   const kpis = $$("#kpis .kpi");
   const runKpi = el => {
     el.classList.add("go");
@@ -1137,10 +997,7 @@ footer { border-top: 1px solid var(--rule-soft); padding-block: 2rem; font-size:
   }), { threshold: 0.5 });
   kpis.forEach(k => ko.observe(k));
 
-  /* ── The viewer ─────────────────────────────────────────────────────────────
-     One gallery for the whole page, in DOM order, so prev/next walks the page the way
-     the visitor read it. A `.shot` with no `data-src` (a capture not taken yet) is not
-     in the gallery and does not open. */
+  
   const lbx = $("#lbx"), lbxImg = $("#lbx-img"), lbxCap = $("#lbx-cap"),
         lbxCount = $("#lbx-count"), lbxModeT = $("#lbx-mode-t"), lbxStage = $("#lbx-stage");
   let gallery = [], at = 0, opener = null, hintT = 0;
@@ -1170,9 +1027,7 @@ footer { border-top: 1px solid var(--rule-soft); padding-block: 2rem; font-size:
   const open = el => {
     refresh();
     opener = el;
-    /* A phone opens in « Lire »: fitting a 1 440 px window into 390 px shows it at 0.27×,
-       which is exactly the problem the viewer exists to solve. A desk opens fitted,
-       because there the whole window is already readable. */
+    
     setMode(innerWidth < 760);
     show(gallery.indexOf(el));
     lbx.hidden = false;
