@@ -331,7 +331,19 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   dots.forEach((d) => d.addEventListener('click', () => { take(); go(Number(d.dataset.go)); }));
   arrows.forEach((btn) => btn.addEventListener('click', () => { take(); go(current + Number(btn.dataset.dir)); }));
   
-  track.addEventListener('touchstart', take, { passive: true });
+  
+  let tx = 0, ty = 0, swiped = false;
+  track.addEventListener('touchstart', (e) => {
+    const t = e.touches[0];
+    tx = t.clientX; ty = t.clientY; swiped = false;
+  }, { passive: true });
+  track.addEventListener('touchmove', (e) => {
+    if (swiped) return;
+    const t = e.touches[0];
+    const dx = Math.abs(t.clientX - tx);
+    const dy = Math.abs(t.clientY - ty);
+    if (dx > 12 && dx > dy) { swiped = true; take(); }
+  }, { passive: true });
   track.addEventListener('keydown', take);
   root.querySelectorAll('.jd-switch button').forEach((b) => b.addEventListener('click', () => {
     take();
