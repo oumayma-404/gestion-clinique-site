@@ -5016,9 +5016,18 @@ p { text-wrap: pretty; }
   .jour-track {
     grid-auto-columns: calc(100% - 1.5rem);
     gap: 0.5rem;
-    
     scroll-padding-inline: 0;
   }
+
+  
+  
+  .jour-track { display: flex; }
+  .jour-track > .jour-item {
+    flex: 0 0 calc(100% - 1.5rem);
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+  .jour-track > .jour-item:last-child { margin-inline-end: 1.5rem; }
 
   
   
