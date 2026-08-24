@@ -1,0 +1,617 @@
+
+
+document.documentElement.classList.remove('no-js');
+
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+
+(() => {
+  const items = document.querySelectorAll('.rise');
+  if (!items.length) return;
+  if (reduced || !('IntersectionObserver' in window)) {
+    items.forEach(el => el.classList.add('in'));
+    return;
+  }
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (!e.isIntersecting) continue;
+      e.target.classList.add('in');
+      io.unobserve(e.target);
+
+
+      e.target.addEventListener('transitionend', () => e.target.classList.add('done'), { once: true });
+    }
+  }, { rootMargin: '0px 0px -12% 0px', threshold: 0.08 });
+  items.forEach(el => io.observe(el));
+})();
+
+
+(() => {
+  const bar = document.querySelector('.topbar');
+  const sentinel = document.querySelector('#top-sentinel');
+  if (!bar || !sentinel || !('IntersectionObserver' in window)) return;
+  new IntersectionObserver(
+    ([e]) => bar.classList.toggle('stuck', !e.isIntersecting),
+    { threshold: 0 }
+  ).observe(sentinel);
+})();
+
+
+(() => {
+  for (const host of document.querySelectorAll('.has-menu')) {
+    const btn = host.querySelector('[aria-expanded]');
+    const menu = host.querySelector('.menu');
+    if (!btn || !menu) continue;
+    let t;
+
+    const open = (v) => {
+      clearTimeout(t);
+      host.dataset.open = String(v);
+      btn.setAttribute('aria-expanded', String(v));
+    };
+
+    host.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') open(true); });
+    host.addEventListener('pointerleave', (e) => {
+      if (e.pointerType !== 'mouse') return;
+      clearTimeout(t);
+      t = setTimeout(() => open(false), 180);
+    });
+    btn.addEventListener('click', () => open(host.dataset.open !== 'true'));
+    host.addEventListener('focusout', () => {
+      if (!host.contains(document.activeElement)) open(false);
+    });
+    host.addEventListener('keydown', (e) => { if (e.key === 'Escape') { open(false); btn.focus(); } });
+  }
+})();
+
+
+(() => {
+  const drawer = document.querySelector('#drawer');
+  const openBtn = document.querySelector('#burger');
+  const closeBtn = document.querySelector('#drawer-close');
+  if (!drawer || !openBtn) return;
+
+  const set = (v) => {
+    drawer.dataset.open = String(v);
+    openBtn.setAttribute('aria-expanded', String(v));
+
+    document.body.style.overflow = v ? 'hidden' : '';
+    if (v) drawer.querySelector('a, button')?.focus();
+    else openBtn.focus();
+  };
+
+  openBtn.addEventListener('click', () => set(true));
+  closeBtn?.addEventListener('click', () => set(false));
+  drawer.addEventListener('click', (e) => { if (e.target.closest('a')) set(false); });
+  addEventListener('keydown', (e) => { if (e.key === 'Escape' && drawer.dataset.open === 'true') set(false); });
+})();
+
+
+(() => {
+  const root = document.querySelector('[data-zones]');
+  if (!root) return;
+  const tabs = [...root.querySelectorAll('.rail button')];
+  const panels = [...root.querySelectorAll('.panel')];
+  if (!tabs.length || !panels.length) return;
+
+  const list = root.querySelector('.rail ul');
+  const wide = matchMedia('(min-width: 62rem)');
+  let current = 0;
+
+  list?.style.setProperty('--n', String(tabs.length));
+
+  const paint = () => {
+    if (!wide.matches) {
+
+
+      panels.forEach(p => { p.hidden = false; p.removeAttribute('data-active'); });
+      tabs.forEach(t => t.setAttribute('aria-selected', 'false'));
+      return;
+    }
+
+
+    panels.forEach((p, i) => { p.hidden = false; p.dataset.active = String(i === current); });
+    tabs.forEach((t, i) => t.setAttribute('aria-selected', String(i === current)));
+    list?.style.setProperty('--i', String(current));
+  };
+
+  tabs.forEach((tab, i) => {
+    tab.addEventListener('click', () => { current = i; paint(); });
+    tab.addEventListener('keydown', (e) => {
+      const d = e.key === 'ArrowDown' ? 1 : e.key === 'ArrowUp' ? -1 : 0;
+      if (!d) return;
+      e.preventDefault();
+      current = (i + d + tabs.length) % tabs.length;
+      paint();
+      tabs[current].focus();
+    });
+  });
+
+  wide.addEventListener('change', paint);
+  paint();
+})();
+
+
+(() => {
+  const list = document.querySelector('[data-serve]');
+  if (!list) return;
+  const items = [...list.querySelectorAll('.serve-item')];
+  if (!items.length) return;
+
+  const open = (idx) => items.forEach((it, i) => {
+    const on = i === idx;
+    it.dataset.open = String(on);
+    it.querySelector('button')?.setAttribute('aria-expanded', String(on));
+  });
+
+  items.forEach((it, i) => it.querySelector('button')?.addEventListener('click', () => {
+    open(it.dataset.open === 'true' ? -1 : i);
+  }));
+  open(0);
+})();
+
+
+
+(() => {
+  const list = document.querySelector('[data-faq]');
+  if (!list) return;
+  const items = [...list.querySelectorAll('.faq-item')];
+  if (!items.length) return;
+
+  const set = (idx) => items.forEach((it, i) => {
+    const on = i === idx;
+    it.dataset.open = String(on);
+    it.querySelector('button')?.setAttribute('aria-expanded', String(on));
+  });
+
+  items.forEach((it, i) => it.querySelector('button')?.addEventListener('click', () => {
+    set(it.dataset.open === 'true' ? -1 : i);
+  }));
+  set(0);
+})();
+
+
+(() => {
+  const els = [...document.querySelectorAll('[data-count]')];
+  if (!els.length || reduced || !('IntersectionObserver' in window)) return;
+
+  const run = (el) => {
+    const target = parseFloat(el.dataset.count);
+    if (!Number.isFinite(target)) return;
+    const final = el.textContent;
+
+    el.style.minWidth = el.getBoundingClientRect().width + 'px';
+    const dur = 1100, t0 = performance.now();
+    const fmt = new Intl.NumberFormat('fr-FR');
+    const tick = (now) => {
+      const p = Math.min(1, (now - t0) / dur);
+
+      const e = 1 - Math.pow(1 - p, 3);
+      if (p < 1) {
+        el.textContent = fmt.format(Math.round(target * e)).replace(/ | /g, ' ');
+        requestAnimationFrame(tick);
+      } else {
+        el.textContent = final;   // restore the exact authored string
+        el.style.minWidth = '';
+      }
+    };
+    requestAnimationFrame(tick);
+  };
+
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (!e.isIntersecting) continue;
+      io.unobserve(e.target);
+      setTimeout(() => run(e.target), 260);
+    }
+  }, { threshold: 0.6 });
+  els.forEach(el => io.observe(el));
+})();
+
+
+
+
+(() => {
+  const list = document.querySelector('[data-serve]');
+  const stage = document.querySelector('[data-serve-stage]');
+  if (!list || !stage) return;
+
+  const items = [...list.querySelectorAll('.serve-item')];
+  const faces = [...stage.querySelectorAll('.sv-face')];
+
+
+  if (!faces.length || faces.length !== items.length) return;
+
+  stage.dataset.stack = 'true';
+
+  let current = -1;
+  const show = (i) => {
+    if (i === current) return;
+    current = i;
+    faces.forEach((face, n) => {
+      const on = n === i;
+      face.dataset.active = String(on);
+
+
+      face.setAttribute('aria-hidden', String(!on));
+    });
+  };
+
+
+
+
+
+  items.forEach((item, i) => item.querySelector('button')?.addEventListener('click', () => show(i)));
+
+  const open = items.findIndex(it => it.dataset.open === 'true');
+  show(open < 0 ? 0 : open);
+})();
+
+
+(() => {
+  const root = document.querySelector('[data-jour]');
+  if (!root) return;
+  const track = root.querySelector('.jour-track');
+  const items = [...root.querySelectorAll('.jour-item')];
+  const dots = [...root.querySelectorAll('.jour-dots button')];
+  const arrows = [...root.querySelectorAll('.jour-arrow')];
+  if (!track || !items.length) return;
+
+  root.dataset.slider = 'on';
+  let current = 0;
+
+  const mark = (i) => {
+    if (i < 0 || i === current) return;
+    current = i;
+    dots.forEach((d, n) => d.setAttribute('aria-current', n === i ? 'true' : 'false'));
+
+
+    if (timer) { clearInterval(timer); timer = setInterval(tick, DWELL); }
+  };
+
+
+
+
+  const wrap = (i) => (i + items.length) % items.length;
+
+  const go = (i) => {
+    const from = current;
+    i = wrap(i);
+
+
+    const left = track.scrollLeft
+      + items[i].getBoundingClientRect().left - track.getBoundingClientRect().left;
+
+
+
+
+
+    const near = Math.abs(i - from) === 1;
+    track.scrollTo({ left, behavior: (reduced || !near) ? 'auto' : 'smooth' });
+  };
+
+  
+  const DWELL = 5500;
+  let timer = null, seen = false, taken = reduced, held = false;
+
+  const stop = () => { clearInterval(timer); timer = null; root.dataset.auto = 'off'; };
+  const tick = () => { if (!taken) go(current + 1); };
+  const sync = () => {
+    if (taken || !seen) { clearInterval(timer); timer = null; return; }
+    if (held) { root.dataset.auto = 'paused'; clearInterval(timer); timer = null; return; }
+    root.dataset.auto = 'on';
+    clearInterval(timer);
+    timer = setInterval(tick, DWELL);
+  };
+
+
+
+  const take = () => { taken = true; stop(); };
+
+  
+  root.addEventListener('focusin', () => { held = true; sync(); });
+  root.addEventListener('focusout', () => { held = false; sync(); });
+  document.addEventListener('visibilitychange', () => { held = document.hidden; sync(); });
+
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver((es) => {
+      seen = es[0].isIntersecting;
+      sync();
+    }, { threshold: 0.35 }).observe(root);
+  }
+
+  dots.forEach((d) => d.addEventListener('click', () => { take(); go(Number(d.dataset.go)); }));
+  arrows.forEach((btn) => btn.addEventListener('click', () => { take(); go(current + Number(btn.dataset.dir)); }));
+  
+  track.addEventListener('touchstart', take, { passive: true });
+  track.addEventListener('keydown', take);
+  root.querySelectorAll('.jd-switch button').forEach((b) => b.addEventListener('click', take));
+
+  
+  const reveal = items.map((it) => {
+    const fig = it.querySelector('.jour-shot--jd');
+    const btns = [...it.querySelectorAll('.jd-switch button')];
+    if (!fig || !btns.length) return () => {};
+    let timer = null, taken = false;
+    const set = (n) => {
+      fig.dataset.flip = String(n);
+      btns.forEach((b, i) => b.setAttribute('aria-pressed', i === n ? 'true' : 'false'));
+    };
+    btns.forEach((b, i) => b.addEventListener('click', () => {
+      taken = true; clearTimeout(timer); set(i);
+    }));
+    return () => {
+      if (taken) return;
+      if (reduced) { set(1); return; }
+      clearTimeout(timer);
+      timer = setTimeout(() => { if (!taken) set(1); }, 1400);
+    };
+  });
+
+  if (reduced || !('IntersectionObserver' in window)) {
+    items.forEach((it, n) => { it.dataset.active = 'true'; reveal[n](); });
+  } else {
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) if (e.isIntersecting) {
+        const n = items.indexOf(e.target);
+        e.target.dataset.active = 'true';       // stays lit: a moment already
+        mark(n);                                // read does not replay on return
+        reveal[n]();
+      }
+    }, { root: track, threshold: 0.6 });
+    items.forEach((it) => { it.dataset.active = 'false'; io.observe(it); });
+  }
+
+  current = -1;
+  mark(0);
+})();
+
+
+(() => {
+  const list = document.querySelector('[data-serve]');
+  if (!list) return;
+  const items = [...list.querySelectorAll('.serve-item')];
+  if (!items.length) return;
+
+  const open = (idx) => items.forEach((it, i) => {
+    const on = i === idx;
+    it.dataset.open = String(on);
+    it.querySelector('button')?.setAttribute('aria-expanded', String(on));
+  });
+
+  items.forEach((it, i) => it.querySelector('button')?.addEventListener('click', () => {
+    open(it.dataset.open === 'true' ? -1 : i);
+  }));
+  open(0);
+})();
+
+
+
+(() => {
+  const list = document.querySelector('[data-faq]');
+  if (!list) return;
+  const items = [...list.querySelectorAll('.faq-item')];
+  if (!items.length) return;
+
+  const set = (idx) => items.forEach((it, i) => {
+    const on = i === idx;
+    it.dataset.open = String(on);
+    it.querySelector('button')?.setAttribute('aria-expanded', String(on));
+  });
+
+  items.forEach((it, i) => it.querySelector('button')?.addEventListener('click', () => {
+    set(it.dataset.open === 'true' ? -1 : i);
+  }));
+  set(0);
+})();
+
+
+(() => {
+  const els = [...document.querySelectorAll('[data-count]')];
+  if (!els.length || reduced || !('IntersectionObserver' in window)) return;
+
+  const run = (el) => {
+    const target = parseFloat(el.dataset.count);
+    if (!Number.isFinite(target)) return;
+    const final = el.textContent;
+
+    el.style.minWidth = el.getBoundingClientRect().width + 'px';
+    const dur = 1100, t0 = performance.now();
+    const fmt = new Intl.NumberFormat('fr-FR');
+    const tick = (now) => {
+      const p = Math.min(1, (now - t0) / dur);
+
+      const e = 1 - Math.pow(1 - p, 3);
+      if (p < 1) {
+        el.textContent = fmt.format(Math.round(target * e)).replace(/ | /g, ' ');
+        requestAnimationFrame(tick);
+      } else {
+        el.textContent = final;   // restore the exact authored string
+        el.style.minWidth = '';
+      }
+    };
+    requestAnimationFrame(tick);
+  };
+
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (!e.isIntersecting) continue;
+      io.unobserve(e.target);
+      setTimeout(() => run(e.target), 260);
+    }
+  }, { threshold: 0.6 });
+  els.forEach(el => io.observe(el));
+})();
+
+
+
+
+(() => {
+  const list = document.querySelector('[data-serve]');
+  const stage = document.querySelector('[data-serve-stage]');
+  if (!list || !stage) return;
+
+  const items = [...list.querySelectorAll('.serve-item')];
+  const faces = [...stage.querySelectorAll('.sv-face')];
+
+
+  if (!faces.length || faces.length !== items.length) return;
+
+  stage.dataset.stack = 'true';
+
+  let current = -1;
+  const show = (i) => {
+    if (i === current) return;
+    current = i;
+    faces.forEach((face, n) => {
+      const on = n === i;
+      face.dataset.active = String(on);
+
+
+      face.setAttribute('aria-hidden', String(!on));
+    });
+  };
+
+
+
+
+
+  items.forEach((item, i) => item.querySelector('button')?.addEventListener('click', () => show(i)));
+
+  const open = items.findIndex(it => it.dataset.open === 'true');
+  show(open < 0 ? 0 : open);
+})();
+
+
+(() => {
+  const items = [...document.querySelectorAll('[data-jour] .jour-item')];
+  if (!items.length) return;
+
+  const light = (it) => { it.dataset.active = 'true'; };
+
+  if (reduced || !('IntersectionObserver' in window)) { items.forEach(light); return; }
+
+
+
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) if (e.isIntersecting) { light(e.target); io.unobserve(e.target); }
+  }, { rootMargin: '0px 0px -33% 0px', threshold: 0 });
+  items.forEach((it) => { it.dataset.active = 'false'; io.observe(it); });
+})();
+
+
+(() => {
+  const list = document.querySelector('[data-serve]');
+  if (!list) return;
+  const items = [...list.querySelectorAll('.serve-item')];
+  if (!items.length) return;
+
+  const open = (idx) => items.forEach((it, i) => {
+    const on = i === idx;
+    it.dataset.open = String(on);
+    it.querySelector('button')?.setAttribute('aria-expanded', String(on));
+  });
+
+  items.forEach((it, i) => it.querySelector('button')?.addEventListener('click', () => {
+    open(it.dataset.open === 'true' ? -1 : i);
+  }));
+  open(0);
+})();
+
+
+
+(() => {
+  const list = document.querySelector('[data-faq]');
+  if (!list) return;
+  const items = [...list.querySelectorAll('.faq-item')];
+  if (!items.length) return;
+
+  const set = (idx) => items.forEach((it, i) => {
+    const on = i === idx;
+    it.dataset.open = String(on);
+    it.querySelector('button')?.setAttribute('aria-expanded', String(on));
+  });
+
+  items.forEach((it, i) => it.querySelector('button')?.addEventListener('click', () => {
+    set(it.dataset.open === 'true' ? -1 : i);
+  }));
+  set(0);
+})();
+
+
+(() => {
+  const els = [...document.querySelectorAll('[data-count]')];
+  if (!els.length || reduced || !('IntersectionObserver' in window)) return;
+
+  const run = (el) => {
+    const target = parseFloat(el.dataset.count);
+    if (!Number.isFinite(target)) return;
+    const final = el.textContent;
+
+    el.style.minWidth = el.getBoundingClientRect().width + 'px';
+    const dur = 1100, t0 = performance.now();
+    const fmt = new Intl.NumberFormat('fr-FR');
+    const tick = (now) => {
+      const p = Math.min(1, (now - t0) / dur);
+
+      const e = 1 - Math.pow(1 - p, 3);
+      if (p < 1) {
+        el.textContent = fmt.format(Math.round(target * e)).replace(/ | /g, ' ');
+        requestAnimationFrame(tick);
+      } else {
+        el.textContent = final;   // restore the exact authored string
+        el.style.minWidth = '';
+      }
+    };
+    requestAnimationFrame(tick);
+  };
+
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (!e.isIntersecting) continue;
+      io.unobserve(e.target);
+      setTimeout(() => run(e.target), 260);
+    }
+  }, { threshold: 0.6 });
+  els.forEach(el => io.observe(el));
+})();
+
+
+
+
+(() => {
+  const list = document.querySelector('[data-serve]');
+  const stage = document.querySelector('[data-serve-stage]');
+  if (!list || !stage) return;
+
+  const items = [...list.querySelectorAll('.serve-item')];
+  const faces = [...stage.querySelectorAll('.sv-face')];
+
+
+  if (!faces.length || faces.length !== items.length) return;
+
+  stage.dataset.stack = 'true';
+
+  let current = -1;
+  const show = (i) => {
+    if (i === current) return;
+    current = i;
+    faces.forEach((face, n) => {
+      const on = n === i;
+      face.dataset.active = String(on);
+
+
+      face.setAttribute('aria-hidden', String(!on));
+    });
+  };
+
+
+
+
+
+  items.forEach((item, i) => item.querySelector('button')?.addEventListener('click', () => show(i)));
+
+  const open = items.findIndex(it => it.dataset.open === 'true');
+  show(open < 0 ? 0 : open);
+})();
+
