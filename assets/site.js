@@ -6,7 +6,9 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 
 (() => {
-  const items = document.querySelectorAll('.rise');
+
+
+  const items = document.querySelectorAll('.rise, [data-reveal]');
   if (!items.length) return;
   if (reduced || !('IntersectionObserver' in window)) {
     items.forEach(el => el.classList.add('in'));
