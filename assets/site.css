@@ -5000,3 +5000,9 @@ p { text-wrap: pretty; }
   .s7-flag > i { animation: none !important; opacity: 1 !important; }
   .s7-btn--primary::after { display: none; }
 }
+
+
+
+@media (max-width: 61.99rem) {
+  .s3-foot { display: none; }
+}

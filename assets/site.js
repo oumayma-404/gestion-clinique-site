@@ -268,6 +268,9 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
     dots.forEach((d, n) => d.setAttribute('aria-current', n === i ? 'true' : 'false'));
 
 
+    panels.forEach((p, n) => { if (!p) return; if (n === i) { if (seen) p.play(); } else p.stop(); });
+
+
     if (timer) { clearInterval(timer); timer = setInterval(tick, DWELL); }
   };
 
@@ -293,7 +296,6 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   };
 
   
-  const DWELL = 5500;
   let timer = null, seen = false, taken = reduced, held = false;
 
   const stop = () => { clearInterval(timer); timer = null; root.dataset.auto = 'off'; };
@@ -302,6 +304,10 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (taken || !seen) { clearInterval(timer); timer = null; return; }
     if (held) { root.dataset.auto = 'paused'; clearInterval(timer); timer = null; return; }
     root.dataset.auto = 'on';
+
+
+
+    if (panels[current]) panels[current].play();
     clearInterval(timer);
     timer = setInterval(tick, DWELL);
   };
@@ -327,38 +333,44 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   
   track.addEventListener('touchstart', take, { passive: true });
   track.addEventListener('keydown', take);
-  root.querySelectorAll('.jd-switch button').forEach((b) => b.addEventListener('click', take));
+  root.querySelectorAll('.jd-switch button').forEach((b) => b.addEventListener('click', () => {
+    take();
+    panels.forEach((p) => p && p.stop());   // and nothing turns over on its own again
+  }));
 
   
-  const reveal = items.map((it) => {
+  const FLIP_AT = 1600;   
+  const DWELL   = 5600;   
+
+  const panels = items.map((it) => {
     const fig = it.querySelector('.jour-shot--jd');
     const btns = [...it.querySelectorAll('.jd-switch button')];
-    if (!fig || !btns.length) return () => {};
-    let timer = null, taken = false;
+    if (!fig || !btns.length) return null;
+    let timer = null;
     const set = (n) => {
       fig.dataset.flip = String(n);
-      btns.forEach((b, i) => b.setAttribute('aria-pressed', i === n ? 'true' : 'false'));
+      btns.forEach((b, k) => b.setAttribute('aria-pressed', k === n ? 'true' : 'false'));
     };
-    btns.forEach((b, i) => b.addEventListener('click', () => {
-      taken = true; clearTimeout(timer); set(i);
-    }));
-    return () => {
-      if (taken) return;
-      if (reduced) { set(1); return; }
-      clearTimeout(timer);
-      timer = setTimeout(() => { if (!taken) set(1); }, 1400);
+    btns.forEach((b, k) => b.addEventListener('click', () => { clearTimeout(timer); set(k); }));
+    return {
+      play () {
+        clearTimeout(timer);
+        if (reduced) { set(1); return; }   // the answer, with no turn
+        set(0);                            // paper first, always
+        timer = setTimeout(() => set(1), FLIP_AT);
+      },
+      stop () { clearTimeout(timer); },
     };
   });
 
   if (reduced || !('IntersectionObserver' in window)) {
-    items.forEach((it, n) => { it.dataset.active = 'true'; reveal[n](); });
+    items.forEach((it, n) => { it.dataset.active = 'true'; if (panels[n]) panels[n].play(); });
   } else {
     const io = new IntersectionObserver((entries) => {
       for (const e of entries) if (e.isIntersecting) {
         const n = items.indexOf(e.target);
-        e.target.dataset.active = 'true';       // stays lit: a moment already
-        mark(n);                                // read does not replay on return
-        reveal[n]();
+        e.target.dataset.active = 'true';   // stays lit: a moment already read
+        mark(n);                            // does not replay its entrance
       }
     }, { root: track, threshold: 0.6 });
     items.forEach((it) => { it.dataset.active = 'false'; io.observe(it); });
