@@ -641,3 +641,114 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   show(open < 0 ? 0 : open);
 })();
 
+
+(function () {
+  const chart = document.querySelector('.s5-chart');
+  if (!chart) return;
+
+  const fly = chart.querySelector('.s5-fly');
+  const views = [...chart.querySelectorAll('.s5-view')];
+  const t16 = chart.querySelector('.s5-t[data-t="16"]');
+  const t26 = chart.querySelector('.s5-t[data-t="26"]');
+  if (!fly || views.length !== 2 || !t16 || !t26) return;
+
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+  let timer = null, alive = false, taken = false, seen = false;
+
+  const head = chart.querySelector('.s5-chead');
+
+  
+  const park = () => {
+    const c = chart.getBoundingClientRect();
+    const f = fly.getBoundingClientRect();
+    const floor = head ? head.getBoundingClientRect().bottom - c.top + 10 : 10;
+    return { x: Math.round(c.width / 2 - f.width / 2), y: Math.round(floor) };
+  };
+
+  
+  const dive = () => {
+    const c = chart.getBoundingClientRect();
+    const f = fly.getBoundingClientRect();
+    const a = t16.getBoundingClientRect();
+    const b = t26.getBoundingClientRect();
+    return {
+      x: Math.round((a.left + a.width / 2 + b.left + b.width / 2) / 2 - c.left - f.width / 2),
+      y: Math.round(a.top + a.height / 2 - c.top - f.height / 2),
+    };
+  };
+
+  const place = (p) => {
+    fly.style.setProperty('--fx', p.x + 'px');
+    fly.style.setProperty('--fy', p.y + 'px');
+  };
+
+  
+  const body = chart.closest('.s5-body');
+  const phase = (name) => {
+    chart.dataset.phase = name;
+    if (body) body.dataset.phase = name;
+  };
+  const press = (i) => views.forEach((v, k) =>
+    v.setAttribute('aria-pressed', k === i ? 'true' : 'false'));
+
+  const strike = (tooth) => {
+    
+    tooth.classList.remove('is-hit');
+    void tooth.offsetWidth;
+    tooth.classList.add('is-hit');
+  };
+  const settle = (tooth) => { tooth.classList.remove('is-hit'); };
+
+  
+  const SCORE = [
+    [0,    () => { phase('diag'); press(0); settle(t16); settle(t26); place(park()); }],
+    [1300, () => { phase('lift'); place(park()); }],        
+    [1000, () => { phase('pose16'); place(dive()); strike(t16); }],  
+    [340,  () => { phase('pose26'); strike(t26); }],        
+    [820,  () => { settle(t16); settle(t26); phase('actes'); press(1); }],
+    [2600, () => { phase('diag'); press(0); place(park()); }],
+  ];
+
+  let step = 0;
+  const tick = () => {
+    if (!alive || taken) return;
+    const [wait, run] = SCORE[step];
+    timer = setTimeout(() => {
+      if (!alive || taken) return;
+      run();
+      step = (step + 1) % SCORE.length;
+      tick();
+    }, wait);
+  };
+
+  const start = () => {
+    if (alive || taken || reduced.matches) return;
+    alive = true; step = 0; tick();
+  };
+  const stop = () => { alive = false; clearTimeout(timer); };
+
+  
+  views.forEach((v, i) => v.addEventListener('click', () => {
+    taken = true; stop();
+    settle(t16); settle(t26);
+    phase(i === 1 ? 'actes' : 'diag');
+    press(i);
+  }));
+
+  if (reduced.matches) { phase('actes'); press(1); return; }
+
+  
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver((es) => {
+      for (const e of es) {
+        seen = e.isIntersecting;
+        if (seen && !document.hidden) start(); else stop();
+      }
+    }, { threshold: 0.15 }).observe(chart);
+  } else { seen = true; start(); }
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) stop(); else if (seen) start();
+  });
+  addEventListener('resize', () => { if (alive) place(park()); });
+})();
