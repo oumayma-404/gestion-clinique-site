@@ -4,12 +4,12 @@
   color-scheme: light;
 
   
-  --page:     #ffffff;
-  --paper:    #f3f3f0;   
-  --paper-2:  #ebebe5;
-  --ink:      #0e1b2a;   
-  --ink-2:    #16283c;
-  --ink-3:    #1d3550;
+  --page:     #f4f8fd;
+  --paper:    #e9f0f8;   
+  --paper-2:  #dde8f3;
+  --ink:      #1e3a5f;   
+  --ink-2:    #254768;
+  --ink-3:    #2d5478;
 
   
   --text:          #09090b;
@@ -20,16 +20,16 @@
   --on-ink-faint:  #7c8b9b;
 
   
-  --rule:      #e4e4e3;
-  --rule-soft: #efefec;
-  --rule-ink:  #2a3f57;
+  --rule:      #d7e2ee;
+  --rule-soft: #e6eef7;
+  --rule-ink:  #3b587c;
 
   
-  --accent:      #2dd4bf;   
-  --accent-hi:   #45e3cf;
-  --accent-ink:  #0b7f74;   
-  --accent-lit:  #7defdc;   
-  --on-accent:   #05231f;
+  --accent:      #2a9d8f;   
+  --accent-hi:   #35b9a8;
+  --accent-ink:  #1c7d70;   
+  --accent-lit:  #6fd8c6;   
+  --on-accent:   #04231f;
 
   
   --azure:  #0284c7;  --azure-lit:  #7dd0fb;
@@ -306,7 +306,7 @@ p { text-wrap: pretty; }
   transition: background var(--mid) var(--ease), border-color var(--mid) var(--ease);
 }
 .topbar.stuck {
-  background: rgb(255 255 255 / 0.9);
+  background: color-mix(in srgb, var(--page) 90%, transparent);
   backdrop-filter: saturate(1.5) blur(14px);
   border-bottom-color: var(--rule);
   
@@ -315,7 +315,7 @@ p { text-wrap: pretty; }
 @keyframes bar-drop { from { transform: translateY(-100%); } to { transform: none; } }
 @media (prefers-reduced-motion: reduce) { .topbar.stuck { animation: none; } }
 .topbar.on-light, .topbar.on-light.stuck {
-  background: rgb(255 255 255 / 0.9); border-bottom-color: var(--rule);
+  background: color-mix(in srgb, var(--page) 90%, transparent); border-bottom-color: var(--rule);
 }
 
 .topbar-in { display: flex; align-items: center; gap: clamp(0.75rem, 0.1rem + 1.8vw, 2rem); height: 4.5rem; }
@@ -356,7 +356,7 @@ p { text-wrap: pretty; }
 .topbar-cta .btn-ghost { display: none; }
 
 .topbar:not(.stuck):not(.on-light) .btn-ghost { color: var(--on-ink); border-color: #3a5b7d; }
-.topbar:not(.stuck):not(.on-light) .btn-ghost:hover { background: #1b3049; border-color: #557eab; }
+.topbar:not(.stuck):not(.on-light) .btn-ghost:hover { background: #2b4a70; border-color: #6a8fbb; }
 .stuck .btn-ghost, .on-light .btn-ghost { color: var(--text); border-color: #d4d4d1; }
 
 

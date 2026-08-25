@@ -4,9 +4,7 @@ document.documentElement.classList.remove('no-js');
 
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-
 (() => {
-
 
   const items = document.querySelectorAll('.rise, [data-reveal]');
   if (!items.length) return;
@@ -20,13 +18,11 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
       e.target.classList.add('in');
       io.unobserve(e.target);
 
-
       e.target.addEventListener('transitionend', () => e.target.classList.add('done'), { once: true });
     }
   }, { rootMargin: '0px 0px -12% 0px', threshold: 0.08 });
   items.forEach(el => io.observe(el));
 })();
-
 
 (() => {
   const bar = document.querySelector('.topbar');
@@ -37,7 +33,6 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
     { threshold: 0 }
   ).observe(sentinel);
 })();
-
 
 (() => {
   for (const host of document.querySelectorAll('.has-menu')) {
@@ -66,7 +61,6 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   }
 })();
 
-
 (() => {
   const drawer = document.querySelector('#drawer');
   const openBtn = document.querySelector('#burger');
@@ -88,7 +82,6 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   addEventListener('keydown', (e) => { if (e.key === 'Escape' && drawer.dataset.open === 'true') set(false); });
 })();
 
-
 (() => {
   const root = document.querySelector('[data-zones]');
   if (!root) return;
@@ -105,12 +98,10 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const paint = () => {
     if (!wide.matches) {
 
-
       panels.forEach(p => { p.hidden = false; p.removeAttribute('data-active'); });
       tabs.forEach(t => t.setAttribute('aria-selected', 'false'));
       return;
     }
-
 
     panels.forEach((p, i) => { p.hidden = false; p.dataset.active = String(i === current); });
     tabs.forEach((t, i) => t.setAttribute('aria-selected', String(i === current)));
@@ -133,7 +124,6 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   paint();
 })();
 
-
 (() => {
   const list = document.querySelector('[data-serve]');
   if (!list) return;
@@ -152,8 +142,6 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   open(0);
 })();
 
-
-
 (() => {
   const list = document.querySelector('[data-faq]');
   if (!list) return;
@@ -171,7 +159,6 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   }));
   set(0);
 })();
-
 
 (() => {
   const els = [...document.querySelectorAll('[data-count]')];
@@ -210,9 +197,6 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   els.forEach(el => io.observe(el));
 })();
 
-
-
-
 (() => {
   const list = document.querySelector('[data-serve]');
   const stage = document.querySelector('[data-serve-stage]');
@@ -220,7 +204,6 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const items = [...list.querySelectorAll('.serve-item')];
   const faces = [...stage.querySelectorAll('.sv-face')];
-
 
   if (!faces.length || faces.length !== items.length) return;
 
@@ -234,21 +217,15 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
       const on = n === i;
       face.dataset.active = String(on);
 
-
       face.setAttribute('aria-hidden', String(!on));
     });
   };
-
-
-
-
 
   items.forEach((item, i) => item.querySelector('button')?.addEventListener('click', () => show(i)));
 
   const open = items.findIndex(it => it.dataset.open === 'true');
   show(open < 0 ? 0 : open);
 })();
-
 
 (() => {
   const root = document.querySelector('[data-jour]');
@@ -267,15 +244,10 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
     current = i;
     dots.forEach((d, n) => d.setAttribute('aria-current', n === i ? 'true' : 'false'));
 
-
     panels.forEach((p, n) => { if (!p) return; if (n === i) { if (seen) p.play(); } else p.stop(); });
-
 
     if (timer) { clearInterval(timer); timer = setInterval(tick, DWELL); }
   };
-
-
-
 
   const wrap = (i) => (i + items.length) % items.length;
 
@@ -283,13 +255,8 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const from = current;
     i = wrap(i);
 
-
     const left = track.scrollLeft
       + items[i].getBoundingClientRect().left - track.getBoundingClientRect().left;
-
-
-
-
 
     const near = Math.abs(i - from) === 1;
     track.scrollTo({ left, behavior: (reduced || !near) ? 'auto' : 'smooth' });
@@ -305,14 +272,10 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (held) { root.dataset.auto = 'paused'; clearInterval(timer); timer = null; return; }
     root.dataset.auto = 'on';
 
-
-
     if (panels[current]) panels[current].play();
     clearInterval(timer);
     timer = setInterval(tick, DWELL);
   };
-
-
 
   const take = () => { taken = true; stop(); };
 
@@ -392,7 +355,6 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   mark(0);
 })();
 
-
 (() => {
   const list = document.querySelector('[data-serve]');
   if (!list) return;
@@ -411,8 +373,6 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   open(0);
 })();
 
-
-
 (() => {
   const list = document.querySelector('[data-faq]');
   if (!list) return;
@@ -430,7 +390,6 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   }));
   set(0);
 })();
-
 
 (() => {
   const els = [...document.querySelectorAll('[data-count]')];
@@ -469,9 +428,6 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   els.forEach(el => io.observe(el));
 })();
 
-
-
-
 (() => {
   const list = document.querySelector('[data-serve]');
   const stage = document.querySelector('[data-serve-stage]');
@@ -479,7 +435,6 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const items = [...list.querySelectorAll('.serve-item')];
   const faces = [...stage.querySelectorAll('.sv-face')];
-
 
   if (!faces.length || faces.length !== items.length) return;
 
@@ -493,21 +448,15 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
       const on = n === i;
       face.dataset.active = String(on);
 
-
       face.setAttribute('aria-hidden', String(!on));
     });
   };
-
-
-
-
 
   items.forEach((item, i) => item.querySelector('button')?.addEventListener('click', () => show(i)));
 
   const open = items.findIndex(it => it.dataset.open === 'true');
   show(open < 0 ? 0 : open);
 })();
-
 
 (() => {
   const items = [...document.querySelectorAll('[data-jour] .jour-item')];
@@ -517,14 +466,11 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   if (reduced || !('IntersectionObserver' in window)) { items.forEach(light); return; }
 
-
-
   const io = new IntersectionObserver((entries) => {
     for (const e of entries) if (e.isIntersecting) { light(e.target); io.unobserve(e.target); }
   }, { rootMargin: '0px 0px -33% 0px', threshold: 0 });
   items.forEach((it) => { it.dataset.active = 'false'; io.observe(it); });
 })();
-
 
 (() => {
   const list = document.querySelector('[data-serve]');
@@ -544,8 +490,6 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   open(0);
 })();
 
-
-
 (() => {
   const list = document.querySelector('[data-faq]');
   if (!list) return;
@@ -563,7 +507,6 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   }));
   set(0);
 })();
-
 
 (() => {
   const els = [...document.querySelectorAll('[data-count]')];
@@ -602,9 +545,6 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   els.forEach(el => io.observe(el));
 })();
 
-
-
-
 (() => {
   const list = document.querySelector('[data-serve]');
   const stage = document.querySelector('[data-serve-stage]');
@@ -612,7 +552,6 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const items = [...list.querySelectorAll('.serve-item')];
   const faces = [...stage.querySelectorAll('.sv-face')];
-
 
   if (!faces.length || faces.length !== items.length) return;
 
@@ -626,21 +565,15 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
       const on = n === i;
       face.dataset.active = String(on);
 
-
       face.setAttribute('aria-hidden', String(!on));
     });
   };
-
-
-
-
 
   items.forEach((item, i) => item.querySelector('button')?.addEventListener('click', () => show(i)));
 
   const open = items.findIndex(it => it.dataset.open === 'true');
   show(open < 0 ? 0 : open);
 })();
-
 
 (function () {
   const chart = document.querySelector('.s5-chart');
@@ -778,7 +711,6 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   });
   addEventListener('resize', () => { if (alive) { place(park()); origin(); } });
 })();
-
 
 (function () {
   const sheet = document.querySelector('.s3-sheet');
