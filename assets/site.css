@@ -5068,6 +5068,69 @@ p { text-wrap: pretty; }
 .s5-f s { font-size: 0.82em; color: var(--on-ink-faint); min-width: 0; overflow-wrap: anywhere; }
 
 
+.s5-fwrap { position: relative; flex: 1 1 auto; min-height: 0; }
+
+.s5-open {
+  
+  position: absolute; inset: -0.55em -0.7em; z-index: 4; overflow: hidden;
+  display: grid; align-content: center;
+  padding: 0.5em;
+  border: 0;
+  border-radius: 10px;
+  background: color-mix(in oklab, var(--ink) 94%, black);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 200ms var(--ease-out);
+}
+
+
+.s5-lightbox {
+  display: grid; gap: 0.4em;
+  padding: 0.4em;
+  border: 1px solid var(--rule-ink);
+  border-radius: 8px;
+  background: var(--ink);
+  box-shadow: 0 14px 34px -14px rgb(0 0 0 / 0.75);
+  transform: scale(0.88);
+  transform-origin: var(--ox, 50%) var(--oy, 50%);
+  will-change: transform;
+  transition: transform 240ms var(--ease-out);
+}
+
+.s5-obar { display: flex; align-items: center; gap: 0.4em; min-width: 0; }
+.s5-odot {
+  flex: none; width: 0.4em; height: 0.4em; border-radius: 50%;
+  background: var(--accent-lit);
+}
+.s5-obar b {
+  font-weight: 500; font-size: 0.84em; min-width: 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.s5-obar s {
+  margin-left: auto; font-size: 0.78em; color: var(--on-ink-faint); white-space: nowrap;
+}
+
+@container (max-width: 22rem) { .s5-obar s { display: none; } }
+
+.s5-stage {
+  position: relative; overflow: hidden;
+  border-radius: 5px;
+  background: #05090e;
+}
+.s5-film { position: relative; width: 100%; aspect-ratio: 720 / 330; }
+.s5-pano { display: block; width: 100%; height: 100%; }
+
+
+.s5-scan {
+  position: absolute; top: 0; bottom: 0; left: 0; width: 16%;
+  background: linear-gradient(90deg,
+    transparent,
+    color-mix(in oklab, var(--accent-lit) 26%, transparent) 70%,
+    color-mix(in oklab, var(--accent-lit) 62%, transparent));
+  opacity: 0; transform: translateX(-100%);
+}
+
+
 .s5-close {
   margin-top: clamp(1rem, 0.7rem + 1.1vw, 1.5rem);
   padding-left: 0.9rem;
@@ -5147,9 +5210,9 @@ p { text-wrap: pretty; }
   --green:  var(--c-bridge);
 }
 
-.s5 .s5-fig,
-.s5 :is(.s5-an, .s5-am, .s5-ad) em { color: var(--c-obturation-ink); }
 .s5-t--k[data-t] > s { color: var(--c-obturation-ink); font-weight: 500; }
+.s5 .s5-fig,
+.s5 :is(.s5-an, .s5-am, .s5-ad) em { color: var(--on-ink); }
 
 
 .s5-t > b {
@@ -5310,6 +5373,47 @@ p { text-wrap: pretty; }
 .s5-body[data-phase="actes"] .s5-f--k::before { opacity: 1; }
 
 
+.s5-f--p { position: relative; isolation: isolate; transition: transform 240ms var(--ease-out); }
+.s5-f--p::before {
+  content: ""; position: absolute; inset: -0.15em -0.3em; z-index: -1;
+  border-radius: 0.45rem;
+  background: color-mix(in oklab, var(--accent-lit) 24%, transparent);
+  opacity: 0;
+  transition: opacity 220ms var(--ease-out);
+}
+.s5-body[data-file] .s5-f--p { transform: translateY(-1px); }
+.s5-body[data-file] .s5-f--p::before { opacity: 1; }
+
+.s5-body[data-file="open"] .s5-open { opacity: 1; }
+.s5-body[data-file="open"] .s5-lightbox {
+  transform: none;
+  transition: transform 420ms var(--ease-out);
+}
+
+
+.s5-pano { clip-path: inset(0 100% 0 0); transition: clip-path 0s 300ms; }
+.s5-body[data-file="open"] .s5-pano {
+  clip-path: inset(0 0 0 0);
+  transition: clip-path 980ms var(--ease-in-out) 140ms;
+}
+
+
+@keyframes s5-scan {
+  0%   { opacity: 0; transform: translateX(-100%); }
+  10%  { opacity: 1; }
+  84%  { opacity: 1; }
+  100% { opacity: 0; transform: translateX(525%); }
+}
+.s5-body[data-file="open"] .s5-scan { animation: s5-scan 1000ms var(--ease-in-out) 130ms both; }
+
+
+.s5-p-ring { opacity: 0; transition: opacity 0s 300ms; }
+.s5-body[data-file="open"] .s5-p-ring {
+  opacity: 0.85;
+  transition: opacity 460ms var(--ease-out) 1240ms;
+}
+
+
 @media (prefers-reduced-motion: reduce) {
   .s5-fly { display: none; }
   .s5 .s5-chart .s5-t.is-hit > b { transform: none; }
@@ -5326,25 +5430,12 @@ p { text-wrap: pretty; }
   .s5-body[data-phase] .s5-ad u:nth-of-type(-n+2)::before { opacity: 1; }
   .s5-body[data-phase] .s5-fig { clip-path: none; }
   .s5-body[data-phase] .s5-f--k::before { opacity: 1; }
-}
-
-
-
-@media (min-width: 75rem) {
-  .s5 .wrap {
-    display: grid;
-    
-    grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
-    
-    grid-template-rows: auto 1fr;
-    gap: 0 clamp(1.5rem, 0.6rem + 2vw, 2.5rem);
-    align-items: start;
-  }
-  .s5-head { grid-column: 1; }
   
-  .s5-dossier { grid-column: 2; grid-row: 1 / span 2; }
-  .s5-close { grid-column: 1; margin-top: clamp(1rem, 0.5rem + 1vw, 1.75rem); }
+  .s5-scan { animation: none; }
 }
+
+
+
 
 
 @media (min-width: 62rem) {

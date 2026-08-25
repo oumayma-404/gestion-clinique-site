@@ -688,6 +688,29 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
     chart.dataset.phase = name;
     if (body) body.dataset.phase = name;
   };
+
+  
+  const wrap = body && body.querySelector('.s5-fwrap');
+  const view = wrap && wrap.querySelector('.s5-open');
+  const box = wrap && wrap.querySelector('.s5-lightbox');
+  const prow = wrap && wrap.querySelector('.s5-f--p');
+
+  
+  const origin = () => {
+    if (!view || !box || !prow) return;
+    const o = view.getBoundingClientRect();
+    const r = prow.getBoundingClientRect();
+    if (!o.width || !r.width) return;
+    
+    box.style.setProperty('--ox', Math.round(r.left + r.width / 2 - o.left - box.offsetLeft) + 'px');
+    box.style.setProperty('--oy', Math.round(r.top + r.height / 2 - o.top - box.offsetTop) + 'px');
+  };
+
+  const file = (state) => {
+    if (!body) return;
+    if (state) { origin(); body.dataset.file = state; }
+    else delete body.dataset.file;
+  };
   const press = (i) => views.forEach((v, k) =>
     v.setAttribute('aria-pressed', k === i ? 'true' : 'false'));
 
@@ -701,12 +724,15 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   
   const SCORE = [
-    [0,    () => { phase('diag'); press(0); settle(t16); settle(t26); place(park()); }],
+    [0,    () => { phase('diag'); file(''); press(0); settle(t16); settle(t26); place(park()); }],
     [1300, () => { phase('lift'); place(park()); }],        
     [1000, () => { phase('pose16'); place(dive()); strike(t16); }],  
     [340,  () => { phase('pose26'); strike(t26); }],        
     [820,  () => { settle(t16); settle(t26); phase('actes'); press(1); }],
-    [2600, () => { phase('diag'); press(0); place(park()); }],
+    [1200, () => { file('pick'); }],                        
+    [380,  () => { file('open'); }],                        
+    [3000, () => { file(''); }],
+    [760,  () => { phase('diag'); press(0); place(park()); }],
   ];
 
   let step = 0;
@@ -730,7 +756,7 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   
   views.forEach((v, i) => v.addEventListener('click', () => {
     taken = true; stop();
-    settle(t16); settle(t26);
+    settle(t16); settle(t26); file('');
     phase(i === 1 ? 'actes' : 'diag');
     press(i);
   }));
@@ -750,7 +776,7 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) stop(); else if (seen) start();
   });
-  addEventListener('resize', () => { if (alive) place(park()); });
+  addEventListener('resize', () => { if (alive) { place(park()); origin(); } });
 })();
 
 
