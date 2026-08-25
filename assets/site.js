@@ -351,8 +351,8 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   }));
 
   
-  const FLIP_AT = 1600;   
-  const DWELL   = 5600;   
+  const FLIP_AT = 2500;   
+  const DWELL   = 8000;   
 
   const panels = items.map((it) => {
     const fig = it.querySelector('.jour-shot--jd');
@@ -361,6 +361,8 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
     let timer = null;
     const set = (n) => {
       fig.dataset.flip = String(n);
+      
+      it.dataset.flip = String(n);
       btns.forEach((b, k) => b.setAttribute('aria-pressed', k === n ? 'true' : 'false'));
     };
     btns.forEach((b, k) => b.addEventListener('click', () => { clearTimeout(timer); set(k); }));
