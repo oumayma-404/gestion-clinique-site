@@ -5078,7 +5078,11 @@ p { text-wrap: pretty; }
 .s5-f s { font-size: 0.82em; color: var(--on-ink-faint); min-width: 0; overflow-wrap: anywhere; }
 
 
-.s5-fwrap { position: relative; flex: 1 1 auto; min-height: 0; }
+
+.s5-fwrap {
+  position: relative; flex: 1 1 auto;
+  min-height: calc(50cqw + 2.5rem);
+}
 
 .s5-open {
   
@@ -5124,11 +5128,32 @@ p { text-wrap: pretty; }
 
 .s5-stage {
   position: relative; overflow: hidden;
+  display: grid;
   border-radius: 5px;
   background: #05090e;
 }
-.s5-film { position: relative; width: 100%; aspect-ratio: 720 / 330; }
-.s5-pano { display: block; width: 100%; height: 100%; }
+
+
+.s5-film {
+  position: relative; overflow: hidden;
+  width: 100%; aspect-ratio: 2 / 1;
+  border-radius: 4px;
+}
+.s5-pano { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+
+.s5-ring {
+  position: absolute; z-index: 2;
+  left: var(--x); top: var(--y);
+  width: 2.2em; height: 2.2em;
+  margin: -1.1em 0 0 -1.1em;
+  border: 2px solid var(--accent-lit);
+  border-radius: 50%;
+  box-shadow: 0 0 12px color-mix(in oklab, var(--accent-lit) 45%, transparent);
+  opacity: 0;
+  transition: opacity 0s 300ms;
+}
+@media (max-width: 47.999rem) { .s5-ring { display: none; } }
 
 
 .s5-scan {
@@ -5419,9 +5444,8 @@ p { text-wrap: pretty; }
 .s5-body[data-file="open"] .s5-scan { animation: s5-scan 1000ms var(--ease-in-out) 130ms both; }
 
 
-.s5-p-ring { opacity: 0; transition: opacity 0s 300ms; }
-.s5-body[data-file="open"] .s5-p-ring {
-  opacity: 0.85;
+.s5-body[data-file="open"] .s5-ring {
+  opacity: 0.9;
   transition: opacity 460ms var(--ease-out) 1240ms;
 }
 
