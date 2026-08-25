@@ -2134,6 +2134,10 @@ p { text-wrap: pretty; }
   background: var(--ink-2);
   border: 1px solid var(--rule-ink);
   box-shadow: var(--shadow-lift);
+
+  
+  content-visibility: auto;
+  contain-intrinsic-size: auto 700px;
 }
 .hero-film__frame {
   position: absolute; inset: 0;
