@@ -4780,11 +4780,24 @@ p { text-wrap: pretty; }
 }
 
 .s5-mid { align-self: stretch; background: var(--rule); }
+
 .s5-quad {
   display: grid;
   grid-template-columns: repeat(8, minmax(0, 1fr));
   gap: clamp(1px, 0.45cqi, 5px);
   min-width: 0;
+}
+
+.s5-quad:first-child {
+  grid-template-columns:
+    minmax(0, 1.10fr) minmax(0, 1.16fr) minmax(0, 1.22fr) minmax(0, 0.92fr)
+    minmax(0, 0.90fr) minmax(0, 0.96fr) minmax(0, 0.78fr) minmax(0, 0.90fr);
+}
+
+.s5-quad:last-child {
+  grid-template-columns:
+    minmax(0, 0.90fr) minmax(0, 0.78fr) minmax(0, 0.96fr) minmax(0, 0.90fr)
+    minmax(0, 0.92fr) minmax(0, 1.22fr) minmax(0, 1.16fr) minmax(0, 1.10fr);
 }
 
 
@@ -4805,15 +4818,49 @@ p { text-wrap: pretty; }
 .s5-quad .s5-t:nth-child(7) { --i: 6 }
 .s5-quad .s5-t:nth-child(8) { --i: 7 }
 
+
 .s5-t > b {
   position: relative;
-  width: 100%; aspect-ratio: 0.76;
+  align-self: end;                       
+  width: 100%;
+  aspect-ratio: var(--ar, 0.76);
   border: 1px solid var(--rule);
-  
-  border-radius: 24% 24% 46% 46% / 18% 18% 82% 82%;
+  border-radius:
+    var(--rr, 24%) var(--rr, 24%) var(--rc, 46%) var(--rc, 46%) /
+    var(--rrv, 18%) var(--rrv, 18%) var(--rcv, 82%) var(--rcv, 82%);
   background: var(--page);
 }
-.s5-arch--low .s5-t > b { border-radius: 46% 46% 24% 24% / 82% 82% 18% 18%; }
+.s5-arch--low .s5-t > b {
+  align-self: start;                     
+  border-radius:
+    var(--rc, 46%) var(--rc, 46%) var(--rr, 24%) var(--rr, 24%) /
+    var(--rcv, 82%) var(--rcv, 82%) var(--rrv, 18%) var(--rrv, 18%);
+}
+
+.s5-t { grid-template-rows: minmax(0, 1fr) auto; }
+
+
+
+
+.s5-quad:first-child .s5-t:nth-child(-n+3),
+.s5-quad:last-child  .s5-t:nth-child(n+6) {
+  --ar: 1.02; --rr: 34%; --rrv: 44%; --rc: 20%; --rcv: 14%;
+}
+
+.s5-quad:first-child .s5-t:nth-child(n+4):nth-child(-n+5),
+.s5-quad:last-child  .s5-t:nth-child(n+4):nth-child(-n+5) {
+  --ar: 0.76; --rr: 36%; --rrv: 52%; --rc: 34%; --rcv: 30%;
+}
+
+.s5-quad:first-child .s5-t:nth-child(6),
+.s5-quad:last-child  .s5-t:nth-child(3) {
+  --ar: 0.60; --rr: 34%; --rrv: 48%; --rc: 48%; --rcv: 78%;
+}
+
+.s5-quad:first-child .s5-t:nth-child(n+7),
+.s5-quad:last-child  .s5-t:nth-child(-n+2) {
+  --ar: 0.70; --rr: 46%; --rrv: 86%; --rc: 12%; --rcv: 9%;
+}
 .s5-t > s {
   font-size: max(0.6em, 8px);
   color: var(--text-faint);
