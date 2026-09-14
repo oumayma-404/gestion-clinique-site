@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /assets/scenes/
+
+Sitemap: https://apexa.tn/sitemap.xml
