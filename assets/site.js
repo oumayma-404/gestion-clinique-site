@@ -4,7 +4,9 @@ document.documentElement.classList.remove('no-js');
 
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+
 (() => {
+
 
   const items = document.querySelectorAll('.rise, [data-reveal]');
   if (!items.length) return;
@@ -18,11 +20,13 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
       e.target.classList.add('in');
       io.unobserve(e.target);
 
+
       e.target.addEventListener('transitionend', () => e.target.classList.add('done'), { once: true });
     }
   }, { rootMargin: '0px 0px -12% 0px', threshold: 0.08 });
   items.forEach(el => io.observe(el));
 })();
+
 
 (() => {
   const bar = document.querySelector('.topbar');
@@ -34,32 +38,6 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   ).observe(sentinel);
 })();
 
-(() => {
-  for (const host of document.querySelectorAll('.has-menu')) {
-    const btn = host.querySelector('[aria-expanded]');
-    const menu = host.querySelector('.menu');
-    if (!btn || !menu) continue;
-    let t;
-
-    const open = (v) => {
-      clearTimeout(t);
-      host.dataset.open = String(v);
-      btn.setAttribute('aria-expanded', String(v));
-    };
-
-    host.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') open(true); });
-    host.addEventListener('pointerleave', (e) => {
-      if (e.pointerType !== 'mouse') return;
-      clearTimeout(t);
-      t = setTimeout(() => open(false), 180);
-    });
-    btn.addEventListener('click', () => open(host.dataset.open !== 'true'));
-    host.addEventListener('focusout', () => {
-      if (!host.contains(document.activeElement)) open(false);
-    });
-    host.addEventListener('keydown', (e) => { if (e.key === 'Escape') { open(false); btn.focus(); } });
-  }
-})();
 
 (() => {
   const drawer = document.querySelector('#drawer');
@@ -67,165 +45,33 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const closeBtn = document.querySelector('#drawer-close');
   if (!drawer || !openBtn) return;
 
-  const set = (v) => {
+  const set = (v, refocus = true) => {
     drawer.dataset.open = String(v);
     openBtn.setAttribute('aria-expanded', String(v));
 
     document.body.style.overflow = v ? 'hidden' : '';
     if (v) drawer.querySelector('a, button')?.focus();
-    else openBtn.focus();
+    else if (refocus) openBtn.focus();
   };
 
   openBtn.addEventListener('click', () => set(true));
   closeBtn?.addEventListener('click', () => set(false));
-  drawer.addEventListener('click', (e) => { if (e.target.closest('a')) set(false); });
+  drawer.addEventListener('click', (e) => {
+    const a = e.target.closest('a');
+    if (!a) return;
+    const hash = a.getAttribute('href');
+    if (!hash?.startsWith('#')) { set(false); return; }
+    
+    e.preventDefault();
+    set(false, false);
+    const target = document.querySelector(hash);
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }));
+  });
   addEventListener('keydown', (e) => { if (e.key === 'Escape' && drawer.dataset.open === 'true') set(false); });
 })();
 
-(() => {
-  const root = document.querySelector('[data-zones]');
-  if (!root) return;
-  const tabs = [...root.querySelectorAll('.rail button')];
-  const panels = [...root.querySelectorAll('.panel')];
-  if (!tabs.length || !panels.length) return;
-
-  const list = root.querySelector('.rail ul');
-  const wide = matchMedia('(min-width: 62rem)');
-  let current = 0;
-
-  list?.style.setProperty('--n', String(tabs.length));
-
-  const paint = () => {
-    if (!wide.matches) {
-
-      panels.forEach(p => { p.hidden = false; p.removeAttribute('data-active'); });
-      tabs.forEach(t => t.setAttribute('aria-selected', 'false'));
-      return;
-    }
-
-    panels.forEach((p, i) => { p.hidden = false; p.dataset.active = String(i === current); });
-    tabs.forEach((t, i) => t.setAttribute('aria-selected', String(i === current)));
-    list?.style.setProperty('--i', String(current));
-  };
-
-  tabs.forEach((tab, i) => {
-    tab.addEventListener('click', () => { current = i; paint(); });
-    tab.addEventListener('keydown', (e) => {
-      const d = e.key === 'ArrowDown' ? 1 : e.key === 'ArrowUp' ? -1 : 0;
-      if (!d) return;
-      e.preventDefault();
-      current = (i + d + tabs.length) % tabs.length;
-      paint();
-      tabs[current].focus();
-    });
-  });
-
-  wide.addEventListener('change', paint);
-  paint();
-})();
-
-(() => {
-  const list = document.querySelector('[data-serve]');
-  if (!list) return;
-  const items = [...list.querySelectorAll('.serve-item')];
-  if (!items.length) return;
-
-  const open = (idx) => items.forEach((it, i) => {
-    const on = i === idx;
-    it.dataset.open = String(on);
-    it.querySelector('button')?.setAttribute('aria-expanded', String(on));
-  });
-
-  items.forEach((it, i) => it.querySelector('button')?.addEventListener('click', () => {
-    open(it.dataset.open === 'true' ? -1 : i);
-  }));
-  open(0);
-})();
-
-(() => {
-  const list = document.querySelector('[data-faq]');
-  if (!list) return;
-  const items = [...list.querySelectorAll('.faq-item')];
-  if (!items.length) return;
-
-  const set = (idx) => items.forEach((it, i) => {
-    const on = i === idx;
-    it.dataset.open = String(on);
-    it.querySelector('button')?.setAttribute('aria-expanded', String(on));
-  });
-
-  items.forEach((it, i) => it.querySelector('button')?.addEventListener('click', () => {
-    set(it.dataset.open === 'true' ? -1 : i);
-  }));
-  set(0);
-})();
-
-(() => {
-  const els = [...document.querySelectorAll('[data-count]')];
-  if (!els.length || reduced || !('IntersectionObserver' in window)) return;
-
-  const run = (el) => {
-    const target = parseFloat(el.dataset.count);
-    if (!Number.isFinite(target)) return;
-    const final = el.textContent;
-
-    el.style.minWidth = el.getBoundingClientRect().width + 'px';
-    const dur = 1100, t0 = performance.now();
-    const fmt = new Intl.NumberFormat('fr-FR');
-    const tick = (now) => {
-      const p = Math.min(1, (now - t0) / dur);
-
-      const e = 1 - Math.pow(1 - p, 3);
-      if (p < 1) {
-        el.textContent = fmt.format(Math.round(target * e)).replace(/ | /g, ' ');
-        requestAnimationFrame(tick);
-      } else {
-        el.textContent = final;   // restore the exact authored string
-        el.style.minWidth = '';
-      }
-    };
-    requestAnimationFrame(tick);
-  };
-
-  const io = new IntersectionObserver((entries) => {
-    for (const e of entries) {
-      if (!e.isIntersecting) continue;
-      io.unobserve(e.target);
-      setTimeout(() => run(e.target), 260);
-    }
-  }, { threshold: 0.6 });
-  els.forEach(el => io.observe(el));
-})();
-
-(() => {
-  const list = document.querySelector('[data-serve]');
-  const stage = document.querySelector('[data-serve-stage]');
-  if (!list || !stage) return;
-
-  const items = [...list.querySelectorAll('.serve-item')];
-  const faces = [...stage.querySelectorAll('.sv-face')];
-
-  if (!faces.length || faces.length !== items.length) return;
-
-  stage.dataset.stack = 'true';
-
-  let current = -1;
-  const show = (i) => {
-    if (i === current) return;
-    current = i;
-    faces.forEach((face, n) => {
-      const on = n === i;
-      face.dataset.active = String(on);
-
-      face.setAttribute('aria-hidden', String(!on));
-    });
-  };
-
-  items.forEach((item, i) => item.querySelector('button')?.addEventListener('click', () => show(i)));
-
-  const open = items.findIndex(it => it.dataset.open === 'true');
-  show(open < 0 ? 0 : open);
-})();
 
 (() => {
   const root = document.querySelector('[data-jour]');
@@ -244,10 +90,15 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
     current = i;
     dots.forEach((d, n) => d.setAttribute('aria-current', n === i ? 'true' : 'false'));
 
+
     panels.forEach((p, n) => { if (!p) return; if (n === i) { if (seen) p.play(); } else p.stop(); });
+
 
     if (timer) { clearInterval(timer); timer = setInterval(tick, DWELL); }
   };
+
+
+
 
   const wrap = (i) => (i + items.length) % items.length;
 
@@ -255,8 +106,13 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const from = current;
     i = wrap(i);
 
+
     const left = track.scrollLeft
       + items[i].getBoundingClientRect().left - track.getBoundingClientRect().left;
+
+
+
+
 
     const near = Math.abs(i - from) === 1;
     track.scrollTo({ left, behavior: (reduced || !near) ? 'auto' : 'smooth' });
@@ -272,10 +128,14 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (held) { root.dataset.auto = 'paused'; clearInterval(timer); timer = null; return; }
     root.dataset.auto = 'on';
 
+
+
     if (panels[current]) panels[current].play();
     clearInterval(timer);
     timer = setInterval(tick, DWELL);
   };
+
+
 
   const take = () => { taken = true; stop(); };
 
@@ -314,8 +174,8 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   }));
 
   
-  const FLIP_AT = 1600;   
-  const DWELL   = 5600;   
+  const FLIP_AT = 2500;   
+  const DWELL   = 8000;   
 
   const panels = items.map((it) => {
     const fig = it.querySelector('.jour-shot--jd');
@@ -324,6 +184,8 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
     let timer = null;
     const set = (n) => {
       fig.dataset.flip = String(n);
+      
+      it.dataset.flip = String(n);
       btns.forEach((b, k) => b.setAttribute('aria-pressed', k === n ? 'true' : 'false'));
     };
     btns.forEach((b, k) => b.addEventListener('click', () => { clearTimeout(timer); set(k); }));
@@ -355,225 +217,6 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   mark(0);
 })();
 
-(() => {
-  const list = document.querySelector('[data-serve]');
-  if (!list) return;
-  const items = [...list.querySelectorAll('.serve-item')];
-  if (!items.length) return;
-
-  const open = (idx) => items.forEach((it, i) => {
-    const on = i === idx;
-    it.dataset.open = String(on);
-    it.querySelector('button')?.setAttribute('aria-expanded', String(on));
-  });
-
-  items.forEach((it, i) => it.querySelector('button')?.addEventListener('click', () => {
-    open(it.dataset.open === 'true' ? -1 : i);
-  }));
-  open(0);
-})();
-
-(() => {
-  const list = document.querySelector('[data-faq]');
-  if (!list) return;
-  const items = [...list.querySelectorAll('.faq-item')];
-  if (!items.length) return;
-
-  const set = (idx) => items.forEach((it, i) => {
-    const on = i === idx;
-    it.dataset.open = String(on);
-    it.querySelector('button')?.setAttribute('aria-expanded', String(on));
-  });
-
-  items.forEach((it, i) => it.querySelector('button')?.addEventListener('click', () => {
-    set(it.dataset.open === 'true' ? -1 : i);
-  }));
-  set(0);
-})();
-
-(() => {
-  const els = [...document.querySelectorAll('[data-count]')];
-  if (!els.length || reduced || !('IntersectionObserver' in window)) return;
-
-  const run = (el) => {
-    const target = parseFloat(el.dataset.count);
-    if (!Number.isFinite(target)) return;
-    const final = el.textContent;
-
-    el.style.minWidth = el.getBoundingClientRect().width + 'px';
-    const dur = 1100, t0 = performance.now();
-    const fmt = new Intl.NumberFormat('fr-FR');
-    const tick = (now) => {
-      const p = Math.min(1, (now - t0) / dur);
-
-      const e = 1 - Math.pow(1 - p, 3);
-      if (p < 1) {
-        el.textContent = fmt.format(Math.round(target * e)).replace(/ | /g, ' ');
-        requestAnimationFrame(tick);
-      } else {
-        el.textContent = final;   // restore the exact authored string
-        el.style.minWidth = '';
-      }
-    };
-    requestAnimationFrame(tick);
-  };
-
-  const io = new IntersectionObserver((entries) => {
-    for (const e of entries) {
-      if (!e.isIntersecting) continue;
-      io.unobserve(e.target);
-      setTimeout(() => run(e.target), 260);
-    }
-  }, { threshold: 0.6 });
-  els.forEach(el => io.observe(el));
-})();
-
-(() => {
-  const list = document.querySelector('[data-serve]');
-  const stage = document.querySelector('[data-serve-stage]');
-  if (!list || !stage) return;
-
-  const items = [...list.querySelectorAll('.serve-item')];
-  const faces = [...stage.querySelectorAll('.sv-face')];
-
-  if (!faces.length || faces.length !== items.length) return;
-
-  stage.dataset.stack = 'true';
-
-  let current = -1;
-  const show = (i) => {
-    if (i === current) return;
-    current = i;
-    faces.forEach((face, n) => {
-      const on = n === i;
-      face.dataset.active = String(on);
-
-      face.setAttribute('aria-hidden', String(!on));
-    });
-  };
-
-  items.forEach((item, i) => item.querySelector('button')?.addEventListener('click', () => show(i)));
-
-  const open = items.findIndex(it => it.dataset.open === 'true');
-  show(open < 0 ? 0 : open);
-})();
-
-(() => {
-  const items = [...document.querySelectorAll('[data-jour] .jour-item')];
-  if (!items.length) return;
-
-  const light = (it) => { it.dataset.active = 'true'; };
-
-  if (reduced || !('IntersectionObserver' in window)) { items.forEach(light); return; }
-
-  const io = new IntersectionObserver((entries) => {
-    for (const e of entries) if (e.isIntersecting) { light(e.target); io.unobserve(e.target); }
-  }, { rootMargin: '0px 0px -33% 0px', threshold: 0 });
-  items.forEach((it) => { it.dataset.active = 'false'; io.observe(it); });
-})();
-
-(() => {
-  const list = document.querySelector('[data-serve]');
-  if (!list) return;
-  const items = [...list.querySelectorAll('.serve-item')];
-  if (!items.length) return;
-
-  const open = (idx) => items.forEach((it, i) => {
-    const on = i === idx;
-    it.dataset.open = String(on);
-    it.querySelector('button')?.setAttribute('aria-expanded', String(on));
-  });
-
-  items.forEach((it, i) => it.querySelector('button')?.addEventListener('click', () => {
-    open(it.dataset.open === 'true' ? -1 : i);
-  }));
-  open(0);
-})();
-
-(() => {
-  const list = document.querySelector('[data-faq]');
-  if (!list) return;
-  const items = [...list.querySelectorAll('.faq-item')];
-  if (!items.length) return;
-
-  const set = (idx) => items.forEach((it, i) => {
-    const on = i === idx;
-    it.dataset.open = String(on);
-    it.querySelector('button')?.setAttribute('aria-expanded', String(on));
-  });
-
-  items.forEach((it, i) => it.querySelector('button')?.addEventListener('click', () => {
-    set(it.dataset.open === 'true' ? -1 : i);
-  }));
-  set(0);
-})();
-
-(() => {
-  const els = [...document.querySelectorAll('[data-count]')];
-  if (!els.length || reduced || !('IntersectionObserver' in window)) return;
-
-  const run = (el) => {
-    const target = parseFloat(el.dataset.count);
-    if (!Number.isFinite(target)) return;
-    const final = el.textContent;
-
-    el.style.minWidth = el.getBoundingClientRect().width + 'px';
-    const dur = 1100, t0 = performance.now();
-    const fmt = new Intl.NumberFormat('fr-FR');
-    const tick = (now) => {
-      const p = Math.min(1, (now - t0) / dur);
-
-      const e = 1 - Math.pow(1 - p, 3);
-      if (p < 1) {
-        el.textContent = fmt.format(Math.round(target * e)).replace(/ | /g, ' ');
-        requestAnimationFrame(tick);
-      } else {
-        el.textContent = final;   // restore the exact authored string
-        el.style.minWidth = '';
-      }
-    };
-    requestAnimationFrame(tick);
-  };
-
-  const io = new IntersectionObserver((entries) => {
-    for (const e of entries) {
-      if (!e.isIntersecting) continue;
-      io.unobserve(e.target);
-      setTimeout(() => run(e.target), 260);
-    }
-  }, { threshold: 0.6 });
-  els.forEach(el => io.observe(el));
-})();
-
-(() => {
-  const list = document.querySelector('[data-serve]');
-  const stage = document.querySelector('[data-serve-stage]');
-  if (!list || !stage) return;
-
-  const items = [...list.querySelectorAll('.serve-item')];
-  const faces = [...stage.querySelectorAll('.sv-face')];
-
-  if (!faces.length || faces.length !== items.length) return;
-
-  stage.dataset.stack = 'true';
-
-  let current = -1;
-  const show = (i) => {
-    if (i === current) return;
-    current = i;
-    faces.forEach((face, n) => {
-      const on = n === i;
-      face.dataset.active = String(on);
-
-      face.setAttribute('aria-hidden', String(!on));
-    });
-  };
-
-  items.forEach((item, i) => item.querySelector('button')?.addEventListener('click', () => show(i)));
-
-  const open = items.findIndex(it => it.dataset.open === 'true');
-  show(open < 0 ? 0 : open);
-})();
 
 (function () {
   const chart = document.querySelector('.s5-chart');
@@ -712,6 +355,7 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   addEventListener('resize', () => { if (alive) { place(park()); origin(); } });
 })();
 
+
 (function () {
   const sheet = document.querySelector('.s3-sheet');
   if (!sheet) return;
@@ -776,5 +420,91 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
     
     const at = sheet.dataset.phase;
     if (at === 'filed' || at === 'held') place(list, 0); else place(field, 40);
+  });
+})();
+
+
+(() => {
+  const form = document.querySelector('#demo-form');
+  const done = document.querySelector('#demo-done');
+  const note = document.querySelector('#demo-note');
+  if (!form || !done || !note) return;
+
+  const btn = form.querySelector('.s8-send');
+  const showDone = () => { form.hidden = true; done.hidden = false; };
+
+
+  if (new URLSearchParams(location.search).get('envoye') === '1') showDone();
+
+  const RULES = {
+    'f-nom':    v => v.trim().length >= 2 || 'Indiquez votre nom.',
+    'f-prenom': v => v.trim().length >= 2 || 'Indiquez votre prénom.',
+    'f-email':  v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()) || 'Cette adresse email n’a pas l’air valide.',
+
+    'f-tel':    v => (v.replace(/\D/g, '').length >= 8) || 'Indiquez un numéro où vous joindre.',
+  };
+
+  const mark = (input, message) => {
+    const field = input.closest('.s8-field');
+    const slot = field?.querySelector('.s8-err');
+    field?.setAttribute('data-invalid', message ? 'true' : 'false');
+    if (slot) slot.textContent = message || '';
+    input.setAttribute('aria-invalid', message ? 'true' : 'false');
+  };
+
+  for (const id of Object.keys(RULES)) {
+    const input = form.querySelector('#' + id);
+
+    input?.addEventListener('blur', () => { const r = RULES[id](input.value); mark(input, r === true ? '' : r); });
+    input?.addEventListener('input', () => { if (input.getAttribute('aria-invalid') === 'true') { const r = RULES[id](input.value); if (r === true) mark(input, ''); } });
+  }
+
+  const fallbackLink = () => {
+    const get = n => (form.querySelector(`[name="${n}"]`)?.value || '').trim();
+    const body = [
+      `Nom : ${get('Nom')}`, `Prénom : ${get('Prenom')}`,
+      `Email : ${get('Email')}`, `Téléphone : ${get('Telephone')}`, '', get('Message'),
+    ].join('\n');
+    return `mailto:contact@apexa.tn?subject=${encodeURIComponent('Demande de démo — apexa.tn')}&body=${encodeURIComponent(body)}`;
+  };
+
+  const fail = () => {
+    note.innerHTML = `L’envoi n’a pas abouti. Écrivez-nous directement&nbsp;: <a href="${fallbackLink()}">ouvrir votre messagerie</a>, ou contact@apexa.tn.`;
+    note.hidden = false;
+  };
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    note.hidden = true;
+
+    let first = null;
+    for (const id of Object.keys(RULES)) {
+      const input = form.querySelector('#' + id);
+      const r = RULES[id](input.value);
+      mark(input, r === true ? '' : r);
+      if (r !== true && !first) first = input;
+    }
+    if (first) { first.focus(); return; }
+
+    btn.dataset.busy = 'true';
+    btn.setAttribute('aria-busy', 'true');
+    try {
+      const data = new FormData(form);
+      data.delete('_next');                       // the no-JS redirect, meaningless here
+      const r = await fetch(form.action.replace('formsubmit.co/', 'formsubmit.co/ajax/'), {
+        method: 'POST', body: data, headers: { Accept: 'application/json' },
+      });
+      if (!r.ok) throw new Error(String(r.status));
+      
+      const body = await r.json().catch(() => null);
+      if (String(body?.success) !== 'true') throw new Error(body?.message || 'refus');
+      showDone();
+      done.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' });
+    } catch {
+      fail();
+    } finally {
+      btn.dataset.busy = 'false';
+      btn.removeAttribute('aria-busy');
+    }
   });
 })();
