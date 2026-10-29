@@ -508,3 +508,30 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
     }
   });
 })();
+
+
+(() => {
+  const box = document.querySelector('#wa');
+  const fab = document.querySelector('#wa-fab');
+  const card = document.querySelector('#wa-card');
+  const close = document.querySelector('#wa-x');
+  if (!box || !fab || !card) return;
+
+  fab.setAttribute('role', 'button');
+  fab.setAttribute('aria-controls', 'wa-card');
+  fab.setAttribute('aria-expanded', 'false');
+
+  const set = (open) => {
+    card.hidden = !open;
+    fab.setAttribute('aria-expanded', String(open));
+    if (open) card.querySelector('.wa-go')?.focus({ preventScroll: true });
+  };
+  const shut = () => { set(false); fab.focus({ preventScroll: true }); };
+
+  fab.addEventListener('click', (e) => { e.preventDefault(); set(card.hidden); });
+
+  fab.addEventListener('keydown', (e) => { if (e.key === ' ') { e.preventDefault(); set(card.hidden); } });
+  close?.addEventListener('click', shut);
+  addEventListener('keydown', (e) => { if (e.key === 'Escape' && !card.hidden) shut(); });
+  document.addEventListener('click', (e) => { if (!card.hidden && !box.contains(e.target)) set(false); });
+})();

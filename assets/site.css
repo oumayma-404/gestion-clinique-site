@@ -49,6 +49,10 @@
   --violet: #7c3aed;  --violet-lit: #c4aeff;
   --amber:  #b45309;  --amber-lit:  #fbc76a;
   --green:  #047857;  --green-lit:  #6ee7b7;
+  
+  --whatsapp:    #25D366;
+  --whatsapp-hi: #4BE083;
+  --on-whatsapp: #04311A;
 
   
   --sketch-edge:    #dcdcd4;
@@ -3966,3 +3970,127 @@ p { text-wrap: pretty; }
   .vp-row.vp-row--wide { grid-template-columns: minmax(0, 1fr); }
   .vp-row.vp-row--wide > :first-child { order: 0; }
 }
+
+
+
+.ct { padding-block: var(--sec-y); background: var(--page); color: var(--text); }
+.ct :where(p, ul) { margin: 0; }
+
+
+.ct-in { display: grid; gap: 2rem; }
+@media (min-width: 62rem) {
+  .ct-in { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 4rem; align-items: start; }
+  .ct-head { margin-bottom: 0; }
+}
+
+.ct-social { display: flex; flex-wrap: wrap; gap: 0.25rem 1.25rem; font-size: var(--t-md); }
+.ct-social a {
+  display: inline-flex; align-items: center; min-height: 2.75rem;
+  color: var(--accent-ink); text-decoration: none;
+}
+@media (hover: hover) and (pointer: fine) { .ct-social a:hover { text-decoration: underline; text-underline-offset: 0.2em; } }
+
+
+.ct-list {
+  list-style: none; padding: 0; min-width: 0;
+  background: var(--white); border: 1px solid var(--rule); border-radius: var(--r-card);
+  box-shadow: var(--shadow-sm); overflow: hidden;
+}
+.ct-list li + li { border-top: 1px solid var(--rule-soft); }
+.ct-row {
+  display: flex; align-items: center; gap: 1rem;
+  min-height: 4.5rem; padding: 0.875rem 1.25rem;
+  color: var(--text); text-decoration: none;
+  transition: background var(--fast) var(--ease);
+}
+.ct-ico {
+  display: grid; place-items: center; flex: none;
+  width: 2.5rem; height: 2.5rem; border-radius: var(--r-med);
+  background: var(--page); color: var(--accent-ink);
+}
+.ct-ico svg { width: 1.25rem; height: 1.25rem; }
+.ct-txt { display: grid; gap: 0.125rem; min-width: 0; flex: 1; }
+.ct-k { font-size: var(--t-sm); color: var(--text-muted); }
+.ct-v {
+  font-size: var(--t-small); font-weight: 500; letter-spacing: 0.01em;
+  font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.ct-go {
+  flex: none; width: 1.125rem; height: 1.125rem; color: var(--text-faint);
+  transition: transform var(--fast) var(--ease-out), color var(--fast) var(--ease);
+}
+.ct-row:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: -2px; }
+@media (hover: hover) and (pointer: fine) {
+  .ct-row:hover { background: var(--page); }
+  .ct-row:hover .ct-go { transform: translateX(3px); color: var(--accent-ink); }
+}
+
+
+.wa {
+  position: fixed; z-index: 90;
+  inset-inline-end: calc(1rem + env(safe-area-inset-right, 0px));
+  inset-block-end: calc(1rem + env(safe-area-inset-bottom, 0px));
+  display: grid; justify-items: end; gap: 0.75rem;
+  pointer-events: none;               
+}
+.wa > * { pointer-events: auto; }
+
+.wa-fab {
+  display: grid; place-items: center;
+  width: 3.5rem; height: 3.5rem; border-radius: var(--r-pill);
+  background: var(--whatsapp); color: var(--on-whatsapp);
+  box-shadow: var(--shadow-chip);
+  transition: background var(--fast) var(--ease), transform var(--press) var(--ease-out);
+}
+.wa-fab svg { width: 1.75rem; height: 1.75rem; }
+.wa-fab:active { transform: scale(0.94); }
+.wa-fab:focus-visible { outline: 3px solid var(--accent-ink); outline-offset: 3px; }
+@media (hover: hover) and (pointer: fine) { .wa-fab:hover { background: var(--whatsapp-hi); } }
+
+.wa-card {
+  display: grid; gap: 0.125rem;
+  width: min(20rem, calc(100vw - 2rem - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)));
+  padding: 1rem;
+  border-radius: var(--r-card); background: var(--white); color: var(--text);
+  border: 1px solid var(--rule); box-shadow: var(--shadow-lift);
+  transform-origin: 100% 100%;
+  animation: wa-in var(--mid) var(--ease-out);
+}
+
+.wa-card[hidden] { display: none; }
+@keyframes wa-in { from { opacity: 0; transform: translateY(0.5rem) scale(0.97); } }
+@media (prefers-reduced-motion: reduce) { .wa-card { animation: none; } }
+
+.wa-top { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; margin-bottom: 0.5rem; }
+.wa-t { margin: 0; font-size: var(--t-lg); font-weight: 500; }
+.wa-x {
+  display: grid; place-items: center; flex: none;
+  width: 2.75rem; height: 2.75rem; margin: -0.5rem -0.5rem -0.5rem 0;
+  border-radius: var(--r-btn); color: var(--text-muted);
+}
+.wa-x svg { width: 1.125rem; height: 1.125rem; }
+@media (hover: hover) and (pointer: fine) { .wa-x:hover { background: var(--page); color: var(--text); } }
+
+.wa-go {
+  display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+  min-height: 2.875rem; margin-bottom: 0.375rem; padding-inline: 1rem;
+  border-radius: var(--r-btn); background: var(--whatsapp); color: var(--on-whatsapp);
+  font-size: var(--t-small); font-weight: 600; text-decoration: none;
+  transition: background var(--fast) var(--ease);
+}
+.wa-go svg { width: 1.25rem; height: 1.25rem; }
+@media (hover: hover) and (pointer: fine) { .wa-go:hover { background: var(--whatsapp-hi); } }
+
+.wa-row {
+  display: flex; align-items: center; gap: 0.625rem;
+  min-height: 2.75rem; padding-inline: 0.5rem;
+  border-radius: var(--r-btn); color: var(--text); text-decoration: none; font-size: var(--t-md);
+}
+.wa-row svg { width: 1.125rem; height: 1.125rem; flex: none; color: var(--text-muted); }
+.wa-row b { font-weight: 500; }
+@media (hover: hover) and (pointer: fine) { .wa-row:hover { background: var(--page); } }
+
+@media print { .wa { display: none; } }
+
+
+@media (max-width: 47.99rem) { .footer { padding-block-end: 6.5rem; } }
