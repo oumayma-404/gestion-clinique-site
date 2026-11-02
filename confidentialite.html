@@ -32,6 +32,9 @@
 <link rel="stylesheet" href="assets/site.css">
 
 
+<script defer src="https://cloud.umami.is/script.js" data-website-id="6329eae5-648b-4e2e-ba49-e11602158e03" data-domains="apexa.tn,www.apexa.tn"></script>
+
+
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://apexa.tn/confidentialite.html#page","url":"https://apexa.tn/confidentialite.html","name":"Confidentialité","description":"Ce qu'APEXA enregistre, qui y accède, combien de temps c'est conservé et comment c'est protégé. En clair, sans jargon.","inLanguage":"fr","isPartOf":{"@id":"https://apexa.tn/#website"},"publisher":{"@id":"https://apexa.tn/#organization"},"breadcrumb":{"@id":"https://apexa.tn/confidentialite.html#fil"}},{"@type":"BreadcrumbList","@id":"https://apexa.tn/confidentialite.html#fil","itemListElement":[{"@type":"ListItem","position":1,"name":"APEXA","item":"https://apexa.tn/"},{"@type":"ListItem","position":2,"name":"Confidentialité"}]}]}</script>
 </head>
 <body class="">
@@ -251,7 +254,8 @@
 
     </div>
 
-    <p class="cp-version">Version 1.0 — septembre 2026. Cette page est revue à chaque évolution du produit.</p>
+    <p class="cp-version">Le site apexa.tn, lui, compte ses visites avec Umami, sans cookie et de façon anonyme.<br>
+      Version 1.1 — novembre 2026. Cette page est revue à chaque évolution du produit.</p>
 
   </div>
 </section>
@@ -350,6 +354,13 @@
   </a>
 </div>
 
+
+<script>
+document.addEventListener('click', function (e) {
+  var a = e.target.closest && e.target.closest('a[href*="/api/meta/client-download"]')
+  if (a && window.umami) window.umami.track(/\/android$/.test(a.getAttribute('href')) ? 'telecharger-android' : 'telecharger-windows')
+}, true)
+</script>
 <script src="assets/site.js" defer></script>
 </body>
 </html>

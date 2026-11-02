@@ -32,6 +32,9 @@
 <link rel="stylesheet" href="assets/site.css">
 
 
+<script defer src="https://cloud.umami.is/script.js" data-website-id="6329eae5-648b-4e2e-ba49-e11602158e03" data-domains="apexa.tn,www.apexa.tn"></script>
+
+
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://apexa.tn/logiciel-dentaire-hors-ligne.html#page","url":"https://apexa.tn/logiciel-dentaire-hors-ligne.html","name":"Logiciel dentaire hors ligne, sans internet","description":"Logiciel dentaire installé sur le PC du cabinet : agenda, dossiers et caisse marchent sans internet. Et ce qui a vraiment besoin d'une ligne, dit clairement.","inLanguage":"fr","isPartOf":{"@id":"https://apexa.tn/#website"},"about":{"@id":"https://apexa.tn/#logiciel"},"publisher":{"@id":"https://apexa.tn/#organization"},"breadcrumb":{"@id":"https://apexa.tn/logiciel-dentaire-hors-ligne.html#fil"}},{"@type":"BreadcrumbList","@id":"https://apexa.tn/logiciel-dentaire-hors-ligne.html#fil","itemListElement":[{"@type":"ListItem","position":1,"name":"APEXA","item":"https://apexa.tn/"},{"@type":"ListItem","position":2,"name":"Logiciel dentaire hors ligne"}]}]}</script>
 </head>
 <body class="">
@@ -334,6 +337,13 @@
   </a>
 </div>
 
+
+<script>
+document.addEventListener('click', function (e) {
+  var a = e.target.closest && e.target.closest('a[href*="/api/meta/client-download"]')
+  if (a && window.umami) window.umami.track(/\/android$/.test(a.getAttribute('href')) ? 'telecharger-android' : 'telecharger-windows')
+}, true)
+</script>
 <script src="assets/site.js" defer></script>
 </body>
 </html>
