@@ -535,3 +535,46 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   addEventListener('keydown', (e) => { if (e.key === 'Escape' && !card.hidden) shut(); });
   document.addEventListener('click', (e) => { if (!card.hidden && !box.contains(e.target)) set(false); });
 })();
+
+
+
+(() => {
+  const root = document.querySelector('[data-tuto]');
+  if (!root) return;
+  const stage = root.querySelector('.tuto-stage');
+  const poster = stage.querySelector('img');
+  const btn = stage.querySelector('.tuto-play');
+  const items = [...root.querySelectorAll('.tuto-item')];
+  const now = (k) => root.querySelector('[data-now="' + k + '"]');
+  let current = items[0];
+
+  const load = () => {
+    const id = current.dataset.yt;
+    if (!id) return;
+    const f = document.createElement('iframe');
+    f.src = 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0';
+    f.title = current.dataset.title;
+    f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+    f.allowFullscreen = true;
+    stage.querySelector('iframe')?.remove();
+    btn.hidden = true;
+    stage.append(f);
+  };
+  const pick = (item) => {
+    current = item;
+    items.forEach((i) => i.setAttribute('aria-current', String(i === item)));
+    stage.querySelector('iframe')?.remove();
+    btn.hidden = false;
+    poster.src = item.querySelector('img').src;
+    btn.setAttribute('aria-label', 'Lire la vidéo : ' + item.dataset.title);
+    now('n').textContent = item.dataset.n;
+    now('title').textContent = item.dataset.title;
+    now('line').textContent = item.dataset.line;
+    now('dur').textContent = item.dataset.dur;
+    load();
+    if (matchMedia('(max-width: 61.99rem)').matches) stage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+
+  btn.addEventListener('click', load);
+  items.forEach((i) => i.addEventListener('click', () => pick(i)));
+})();

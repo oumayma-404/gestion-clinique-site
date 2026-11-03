@@ -405,6 +405,7 @@ p { text-wrap: pretty; }
   transition: color var(--fast) var(--ease), background var(--fast) var(--ease);
 }
 .nav a:hover, .nav button:hover { background: rgb(255 255 255 / 0.08); }
+.nav a[aria-current="page"] { font-weight: 500; }
 .stuck .nav a, .stuck .nav button, .on-light .nav a, .on-light .nav button { color: var(--text); }
 .stuck .nav a:hover, .stuck .nav button:hover,
 .on-light .nav a:hover, .on-light .nav button:hover { background: var(--paper); }
@@ -458,7 +459,7 @@ p { text-wrap: pretty; }
 .drawer-actions .btn { width: 100%; }
 
 
-@media (min-width: 68rem) {
+@media (min-width: 74rem) {
   .nav { display: flex; }
   .burger { display: none; }
   .topbar-link { display: inline-flex; }
@@ -4094,3 +4095,70 @@ p { text-wrap: pretty; }
 
 
 @media (max-width: 47.99rem) { .footer { padding-block-end: 6.5rem; } }
+
+
+
+.tuto { display: grid; gap: clamp(1.25rem, 0.8rem + 1.6vw, 2rem); margin-top: clamp(2rem, 1.4rem + 2.4vw, 3.5rem); }
+@media (min-width: 62rem) {
+  .tuto { grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr); align-items: start; }
+  .tuto-player { position: sticky; top: 5.5rem; }
+}
+.tuto-player { display: grid; gap: 1rem; }
+.tuto-stage {
+  position: relative; aspect-ratio: 16 / 9; overflow: hidden;
+  border: 1px solid var(--rule); border-radius: var(--r-card); background: var(--film); box-shadow: var(--shadow-shot);
+}
+.tuto-stage img, .tuto-stage iframe { position: absolute; inset: 0; display: block; width: 100%; height: 100%; border: 0; object-fit: cover; }
+.tuto-play {
+  position: absolute; inset: 0; display: grid; place-items: center;
+  padding: 0; border: 0; background: rgb(9 9 11 / 0.18); color: var(--on-accent); cursor: pointer;
+  transition: background var(--fast) var(--ease);
+}
+.tuto-play[hidden] { display: none; }
+.tuto-disc {
+  display: grid; place-items: center; width: clamp(3.5rem, 2.6rem + 3.2vw, 5.25rem); aspect-ratio: 1;
+  border-radius: var(--r-pill); background: var(--accent); box-shadow: var(--glow-accent);
+  transition: transform var(--fast) var(--ease-out);
+}
+.tuto-disc svg { width: 42%; height: 42%; margin-inline-start: 8%; }
+@media (hover: hover) and (pointer: fine) {
+  .tuto-play:hover { background: rgb(9 9 11 / 0.08); }
+  .tuto-play:hover .tuto-disc { transform: scale(1.06); }
+}
+.tuto-play:active .tuto-disc { transform: scale(0.96); }
+.tuto-play:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; }
+
+.tuto-now { display: flex; align-items: flex-start; gap: 0.875rem; }
+.tuto-now-txt { display: grid; gap: 0.25rem; min-width: 0; }
+.tuto-now-txt > * { margin: 0; }
+.tuto-now h2 { font-size: var(--t-h3); font-weight: 500; line-height: 1.2; letter-spacing: -0.015em; }
+.tuto-now p { font-size: var(--t-small); line-height: 1.5; color: var(--text-muted); }
+.tuto-n {
+  display: grid; place-items: center; flex: none; width: 2.25rem; height: 2.25rem;
+  border-radius: var(--r-pill); background: var(--ink); color: var(--white); font-size: var(--t-sm); font-weight: 600;
+}
+.tuto-dur { margin-inline-start: auto; padding-top: 0.375rem; font-size: var(--t-sm); color: var(--text-muted); font-variant-numeric: tabular-nums; }
+
+.tuto-list { display: grid; gap: 0.375rem; margin: 0; padding: 0; list-style: none; }
+.tuto-item {
+  display: grid; grid-template-columns: clamp(7rem, 5.5rem + 5vw, 9rem) minmax(0, 1fr); gap: 0.875rem; align-items: center;
+  width: 100%; min-height: 2.75rem; padding: 0.5rem;
+  border: 1px solid transparent; border-radius: var(--r-med); background: transparent;
+  color: inherit; font: inherit; text-align: start; cursor: pointer;
+  transition: background var(--fast) var(--ease), border-color var(--fast) var(--ease);
+}
+@media (hover: hover) and (pointer: fine) { .tuto-item:hover { background: var(--page); } }
+.tuto-item[aria-current="true"] { border-color: var(--rule); background: var(--paper); }
+.tuto-item:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 2px; }
+.tuto-thumb { position: relative; overflow: hidden; aspect-ratio: 16 / 9; border-radius: var(--r-btn); background: var(--film); }
+.tuto-thumb img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.tuto-time {
+  position: absolute; right: 0.3rem; bottom: 0.3rem; padding: 0.05rem 0.3rem;
+  border-radius: var(--r-xs); background: rgb(9 9 11 / 0.78); color: var(--white);
+  font-size: var(--t-2xs); font-weight: 500; font-variant-numeric: tabular-nums;
+}
+.tuto-meta { display: grid; gap: 0.125rem; min-width: 0; }
+.tuto-step { font-size: var(--t-2xs); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent-ink); }
+.tuto-meta b { font-size: var(--t-md); font-weight: 500; line-height: 1.3; }
+.tuto-line { font-size: var(--t-sm); line-height: 1.4; color: var(--text-muted); }
+@media (max-width: 35.99rem) { .tuto-line { display: none; } }
