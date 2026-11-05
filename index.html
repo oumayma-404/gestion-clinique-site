@@ -102,6 +102,12 @@
     <div class="drawer-actions">
       <a class="btn btn-primary" href="#telecharger">Essayer gratuitement</a>
       <a class="btn btn-ghost" href="#demande">Demander une démo</a>
+      <a class="demo-pill demo-pill--block" href="https://demo.apexa.tn" target="_blank" rel="noopener">
+        <span class="demo-pill__dot" aria-hidden="true"></span>
+        <span class="demo-pill__label">Visiter la démo en direct</span>
+        <span class="demo-pill__text">Visitez un cabinet fictif, sans inscription</span>
+        <svg class="demo-pill__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
     </div>
   </div>
 </div>
@@ -126,7 +132,7 @@
 
       <div class="hero-actions rise d3">
         <a class="btn btn-primary" href="#telecharger">Essayer gratuitement</a>
-        <a class="btn btn-ghost" href="#contact">Contactez-nous</a>
+        <a class="btn btn-ghost btn-live" href="https://demo.apexa.tn" target="_blank" rel="noopener"><span class="demo-pill__dot" aria-hidden="true"></span>Voir la démo en direct</a>
       </div>
 
       <ul class="trust rise d4">
@@ -144,6 +150,55 @@
     <p class="sr-only">Une animation en quatre temps&nbsp;: la journée s’organise dans l’agenda, le dossier du patient s’ouvre, la note d’honoraires se crée, puis la caisse se met à jour.</p>
   </div>
 
+</section>
+
+
+<section class="tour" id="demo" aria-labelledby="tour-t">
+  <div class="wrap tour-grid">
+    <div class="tour-copy">
+      <p class="eyebrow tour-eyebrow"><span class="demo-pill__dot" aria-hidden="true"></span>Démo en direct</p>
+      <h2 id="tour-t">Ouvrez un cabinet. Cliquez partout.</h2>
+      <p class="tour-lede">Un cabinet fictif, rempli de patients, de rendez-vous et de soins. Sans inscription, rien à installer.</p>
+      <a class="btn btn-primary tour-cta" href="https://demo.apexa.tn" target="_blank" rel="noopener">Visiter le cabinet démo <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    </div>
+    <div class="tour-view">
+      <div class="tour-tabs" role="tablist" aria-label="Écrans de la démo">
+          <button class="tour-tab" type="button" role="tab" id="tour-tab-agenda" aria-controls="tour-panel-agenda" aria-selected="true">
+            <span class="tour-tab__label">Agenda</span><span class="tour-tab__bar" aria-hidden="true"></span>
+          </button>
+          <button class="tour-tab" type="button" role="tab" id="tour-tab-dossier" aria-controls="tour-panel-dossier" aria-selected="false" tabindex="-1">
+            <span class="tour-tab__label">Dossier patient</span><span class="tour-tab__bar" aria-hidden="true"></span>
+          </button>
+          <button class="tour-tab" type="button" role="tab" id="tour-tab-odonto" aria-controls="tour-panel-odonto" aria-selected="false" tabindex="-1">
+            <span class="tour-tab__label">Odontogramme</span><span class="tour-tab__bar" aria-hidden="true"></span>
+          </button>
+          <button class="tour-tab" type="button" role="tab" id="tour-tab-traitement" aria-controls="tour-panel-traitement" aria-selected="false" tabindex="-1">
+            <span class="tour-tab__label">Traitements</span><span class="tour-tab__bar" aria-hidden="true"></span>
+          </button>
+      </div>
+      <div class="tour-stage">
+        <div class="tour-bar" aria-hidden="true"><i></i><i></i><i></i><span>demo.apexa.tn</span></div>
+        <div class="tour-slides">
+          <figure class="tour-slide is-active" role="tabpanel" id="tour-panel-agenda" aria-labelledby="tour-tab-agenda" style="--focus: 30% 35%">
+            <img src="assets/img/demo-agenda.webp" width="2368" height="1480" alt="La semaine du cabinet, deux praticiens, sans un chevauchement." decoding="async">
+            <figcaption class="tour-chip" style="--cx: 12%; --cy: 30%"><span class="demo-pill__dot" aria-hidden="true"></span>69 rendez-vous cette semaine</figcaption>
+          </figure>
+          <figure class="tour-slide" role="tabpanel" id="tour-panel-dossier" aria-labelledby="tour-tab-dossier" style="--focus: 20% 75%" aria-hidden="true">
+            <img src="assets/img/demo-dossier.webp" width="2368" height="1480" alt="Tout le patient sur une page : santé, alertes, séances." decoding="async" loading="lazy">
+            <figcaption class="tour-chip" style="--cx: 6%; --cy: 70%"><span class="demo-pill__dot" aria-hidden="true"></span>Allergie à la pénicilline — signalée partout</figcaption>
+          </figure>
+          <figure class="tour-slide" role="tabpanel" id="tour-panel-odonto" aria-labelledby="tour-tab-odonto" style="--focus: 72% 52%" aria-hidden="true">
+            <img src="assets/img/demo-odonto.webp" width="2368" height="1480" alt="Le schéma dentaire, dent par dent, en symboles." decoding="async" loading="lazy">
+            <figcaption class="tour-chip" style="--cx: 52%; --cy: 66%"><span class="demo-pill__dot" aria-hidden="true"></span>Dent 36 : couronne en cours</figcaption>
+          </figure>
+          <figure class="tour-slide" role="tabpanel" id="tour-panel-traitement" aria-labelledby="tour-tab-traitement" style="--focus: 25% 62%" aria-hidden="true">
+            <img src="assets/img/demo-traitement.webp" width="2368" height="1480" alt="Un implant suivi séance après séance, jusqu’au bout." decoding="async" loading="lazy">
+            <figcaption class="tour-chip" style="--cx: 8%; --cy: 66%"><span class="demo-pill__dot" aria-hidden="true"></span>Implant 36 · 3 séances sur 6</figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
 
@@ -1160,6 +1215,8 @@
 document.addEventListener('click', function (e) {
   var a = e.target.closest && e.target.closest('a[href*="/api/meta/client-download"]')
   if (a && window.umami) window.umami.track(/\/android$/.test(a.getAttribute('href')) ? 'telecharger-android' : 'telecharger-windows')
+  var d = e.target.closest && e.target.closest('a[href^="https://demo.apexa.tn"]')
+  if (d && window.umami) window.umami.track('essayer-demo')
 }, true)
 </script>
 <script src="assets/site.js" defer></script>

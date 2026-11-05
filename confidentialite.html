@@ -102,6 +102,12 @@
     <div class="drawer-actions">
       <a class="btn btn-primary" href="index.html#telecharger">Essayer gratuitement</a>
       <a class="btn btn-ghost" href="index.html#demande">Demander une démo</a>
+      <a class="demo-pill demo-pill--block" href="https://demo.apexa.tn" target="_blank" rel="noopener">
+        <span class="demo-pill__dot" aria-hidden="true"></span>
+        <span class="demo-pill__label">Visiter la démo en direct</span>
+        <span class="demo-pill__text">Visitez un cabinet fictif, sans inscription</span>
+        <svg class="demo-pill__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
     </div>
   </div>
 </div>
@@ -356,6 +362,8 @@
 document.addEventListener('click', function (e) {
   var a = e.target.closest && e.target.closest('a[href*="/api/meta/client-download"]')
   if (a && window.umami) window.umami.track(/\/android$/.test(a.getAttribute('href')) ? 'telecharger-android' : 'telecharger-windows')
+  var d = e.target.closest && e.target.closest('a[href^="https://demo.apexa.tn"]')
+  if (d && window.umami) window.umami.track('essayer-demo')
 }, true)
 </script>
 <script src="assets/site.js" defer></script>

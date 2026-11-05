@@ -578,3 +578,56 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   btn.addEventListener('click', load);
   items.forEach((i) => i.addEventListener('click', () => pick(i)));
 })();
+
+
+
+(() => {
+  const tour = document.querySelector('.tour');
+  if (!tour) return;
+  const tabs = [...tour.querySelectorAll('.tour-tab')];
+  const slides = [...tour.querySelectorAll('.tour-slide')];
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let current = 0;
+  const show = (i, focus) => {
+    current = (i + tabs.length) % tabs.length;
+    tabs.forEach((t, k) => {
+      const on = k === current;
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+      t.tabIndex = on ? 0 : -1;
+      slides[k].classList.toggle('is-active', on);
+      slides[k].setAttribute('aria-hidden', on ? 'false' : 'true');
+    });
+    if (focus) tabs[current].focus();
+
+    const row = tabs[current].parentElement;
+    row.scrollTo({ left: tabs[current].offsetLeft - row.offsetLeft - 8, behavior: 'smooth' });
+  };
+  tabs.forEach((t, k) => {
+    t.addEventListener('click', () => show(k));
+
+    t.querySelector('.tour-tab__bar').addEventListener('animationend', () => { if (!still && k === current) show(current + 1); });
+  });
+  tour.querySelector('.tour-tabs').addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') { e.preventDefault(); show(current + 1, true); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); show(current - 1, true); }
+  });
+  const reasons = new Set();
+  const pause = (why, on) => { on ? reasons.add(why) : reasons.delete(why); tour.classList.toggle('is-paused', reasons.size > 0); };
+  tour.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') pause('hover', true); });
+  tour.addEventListener('pointerleave', () => pause('hover', false));
+  tour.addEventListener('focusin', () => pause('focus', true));
+  tour.addEventListener('focusout', () => pause('focus', false));
+  document.addEventListener('visibilitychange', () => pause('hidden', document.hidden));
+  let x0 = null;
+  const stage = tour.querySelector('.tour-slides');
+  stage.addEventListener('pointerdown', e => { x0 = e.clientX; });
+  stage.addEventListener('pointerup', e => {
+    if (x0 === null) return;
+    const dx = e.clientX - x0; x0 = null;
+    if (Math.abs(dx) > 40) show(current + (dx < 0 ? 1 : -1));
+  });
+
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(([en]) => pause('offscreen', !en.isIntersecting), { threshold: 0.5 }).observe(stage);
+  }
+})();
